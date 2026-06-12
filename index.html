@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fakekammer</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="asset/fakekammer_fabicon.png">
+  <script>
+  (function(d) {
+    var config = {
+      kitId: 'eqv1shm',
+      scriptTimeout: 3000,
+      async: true
+    },
+    h=d.documentElement,t=setTimeout(function(){h.className=h.className.replace(/\bwf-loading\b/g,"")+" wf-inactive";},config.scriptTimeout),tk=d.createElement("script"),f=false,s=d.getElementsByTagName("script")[0],a;h.className+=" wf-loading";tk.src='https://use.typekit.net/'+config.kitId+'.js';tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;clearTimeout(t);try{Typekit.load(config)}catch(e){}};s.parentNode.insertBefore(tk,s)
+  })(document);
+</script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">Fakekammer</div>
+    <div class="subtitle">a generated wunderkammer of doubtful objects</div>
+    <section class="intro" id="introPanel">
+      Fakekammer는 한 수집가가 모은 ‘가짜들’로 이루어진 아카이브이자, 여전히 가짜로 남아 있는 것들과 진짜가 되어버린 가짜들을 통해 진위의 경계를 탐구하는 전시이다. 이 프로젝트는 중세의 ‘경이의
+      방(Wunderkammer)’을 모티프로 삼는다. 과거의 수집가들이 기이하고 희귀한 물건들을 한 방 안에 모아 자신만의 세계를 축소해 두었다면, Fakekammer는 ‘가짜’라는 공통된 키워드로 모인
+      기묘한 소우주를 구성한다. 진짜처럼 보이도록 정교하게 제작된 위조품, 장난, 허구적 아카이브들을 통해, 사실과 허구의 경계가 어떻게 흔들리고 이동하는지를 시각적으로 드러낸다. 관람객은 이 방을 거닐며,
+      누군가가 믿고 싶어서 만들어낸 것들이 지닌 매력과 집요함을 마주하게 된다. 그리고 마침내 진짜로 굳어지는 가짜와 여전히 가짜로 남는 가짜 사이를 오가며, 무엇이 진짜인가가 아니라 무엇을 어떻게 믿어
+      왔는가라는 질문을 경험하게 된다.
+    </section>
+  </header>
+
+  <nav class="tools" aria-label="archive controls">
+    <button id="centerBtn" class="icon-btn" type="button" aria-label="back to center">reset view</button>
+    <button id="saveBtn" type="button">save image</button>
+    <button id="clearBtn" type="button">clear</button>
+  </nav>
+
+  <main id="stage" class="stage" aria-label="interactive fake archive">
+    <div id="hint" class="hint">
+      click the empty wall<br />
+      to build your own fakekammer
+    </div>
+  </main>
+
+  <aside id="panel" class="panel" aria-hidden="true">
+    <div class="panel-image">
+      <img id="panelImg" alt="" />
+    </div>
+
+    <div class="panel-text">
+      <h1 id="panelTitle"></h1>
+
+      <dl class="meta">
+        <dt>ID</dt>
+        <dd id="panelId"></dd>
+        <dt>Year</dt>
+        <dd id="panelYear"></dd>
+        <dt>Reality mode</dt>
+        <dd id="panelMode"></dd>
+        <dt>Status</dt>
+        <dd id="panelStatus"></dd>
+        <dt>Value type</dt>
+        <dd id="panelValue"></dd>
+      </dl>
+
+      <div id="panelDesc" class="description"></div>
+    </div>
+  </aside>
+
+  <button id="closeBtn" class="close" type="button">close</button>
+
+  <div class="panel-note">compact caption appears on image hover</div>
+
+  <script src = "script.js"></script>
+  
+</body>
+
+</html>

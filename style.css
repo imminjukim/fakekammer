@@ -1,0 +1,483 @@
+@font-face {
+  font-family: "ABCsolar";
+  src: url("font/ABCSolarDisplayVariable-Trial.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap
+}
+
+:root {
+      --bg: #ffffff;
+      --ink: #000000;
+      --muted: #ffffff;
+      --line: rgba(0,0,0,.0);
+      --paper: rgba(255,255,255);
+      --shadow: 0 24px 70px rgba(0,0,0,.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      opacity: 0;
+      transition: opacity .25s ease;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,.98), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      color: var(--ink);
+      font-family: "ABCsolar", "dongle", "Apple SD Gothic Neo", sans-serif;
+      cursor: crosshair;
+      user-select: none;
+      overscroll-behavior: none;
+      touch-action: none;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      line-break: strict;
+    }
+
+    body.ready {
+      opacity: 1;
+    }
+
+    .intro,
+    .panel,
+    .panel-text,
+    .meta,
+    .description,
+    button {
+      font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+    }
+
+    .site-header {
+      position: fixed;
+      width: fit-content;
+      top: 12px;
+      left: 28px;
+      z-index: 1000;
+      mix-blend-mode: normal;
+      pointer-events: auto;
+    }
+
+    .brand {
+      border: none;
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      margin-bottom: -6px;
+      z-index: 1;
+
+      font-family: "acid-green", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 80px;
+      letter-spacing: .02em;
+      color: #ff00ff;
+      
+      /* 젤리 질감 */
+      -webkit-text-stroke: 0.6px rgba(255,255,255,.22);
+
+      text-shadow:
+         0 -1px 0 rgba(255,255,255,.45),
+         0 1px 0 rgba(255,150,255,.75),
+         0 2px 0 rgba(200,0,200,.85),
+         0 3px 0 rgba(120,0,120,.35);
+
+      filter:
+        saturate(1.12)
+        contrast(1.04);
+      opacity: 0;
+      transition:
+        transform .18s ease,
+        text-shadow .18s ease,
+        filter .18s ease,
+        opacity .2s ease;
+
+      cursor: help;
+      
+    }
+
+    .wf-active .brand,
+    .wf-inactive .brand {
+      opacity: 1;
+    }
+
+    .brand:hover {
+      opacity: 0;
+    }
+
+    .subtitle {
+      margin-top: 0px;
+      font-family: "ABCsolar", monospace;
+      font-weight: 500;
+      font-size: 16px;
+      color: #ff00ff;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .tools {
+      position: fixed;
+      top: 22px;
+      right: 24px;
+      z-index: 1001;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      cursor: default;
+      pointer-events: auto;
+    }
+
+    .tools * {
+      pointer-events: auto;
+    }
+
+    .stage {
+      pointer-events: auto;
+      width: 10000px;
+      height: 7000px;
+      transition: background-color .35s ease;
+    }
+
+    body:has(.site-header:hover) .stage {
+      background-color: #ff00ff;
+    }
+
+    body:has(.artifact:hover) .stage {
+      background-color: #ff00ff;
+    }
+
+    body:has(.artifact:hover) .brand {
+      opacity: 0;
+    }
+
+    button {
+      background: rgba(0,0,0,1);
+      color: #fff;
+      padding: 5px 20px;
+      border-radius: 22px;
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 0 18px rgba(255, 255, 255, 0),
+        0 0 40px rgba(255,255,255,.03);
+
+      font-family: "ABCsolar", monospace;
+      font-weight: 450;
+      font-size: 14px;
+
+      cursor: pointer;
+      transition:
+        background .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+    }
+
+    button:hover {
+      background: #ff00ff;
+
+      color: #000;
+
+      border-color: rgba(255,0,255,.8);
+
+      box-shadow:
+        0 0 5px rgba(255,0,255,.75),
+        0 0 12px rgba(255,0,255,.45),
+        0 0 40px rgba(255,0,255,.18);
+
+      text-shadow:
+        0 0 8px rgba(255,255,255,.35);
+
+      transform: translateY(-1px);
+    }
+
+    .intro {
+      position: absolute;
+      top: 52px;
+      left: 0;
+      z-index: 100;
+
+      width: min(420px, calc(100vw - 56px));
+
+      font-family: "Apple SD Gothic Neo", sans-serif;
+      font-weight: 500;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #000000;
+
+      background: rgba(255,255,255,1);
+      border: 1px solid rgba(0,0,0,1);
+      padding: 16px 18px;
+
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+
+      transition:
+        opacity .18s ease,
+        transform .18s ease,
+        visibility .18s ease;
+
+      pointer-events: none;
+      }
+
+    .site-header:hover .intro {
+      opacity: .96;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .site-header:hover .brand {
+      opacity: 0 !important;
+    }
+
+    .stage {
+      position: fixed;
+      left: 0;
+      top: 0;
+      min-width: 100vw;
+      min-height: 100vh;
+      overflow: visible;
+      transform-origin: 0 0;
+      will-change: transform;
+
+      background-image:
+      radial-gradient(circle, rgba(255, 255, 255, 1) 1px, transparent 0.8px);
+      background-size: 36px 36px;
+    }
+
+    .hint {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 1;
+      color: rgba(0,0,0,1);
+
+      font-family: "ABCsolar";
+      font-weight: 500;
+      font-size: 16px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+
+    .hint.hidden {
+      opacity: 0;
+    }
+
+    .artifact {
+      position: absolute;
+      width: var(--size, 100px);
+      transform: translate(var(--x, 50vw), var(--y, 50vh));
+      z-index: var(--z, 10);
+      cursor: grab;
+      animation: materialize .28s ease both;
+      touch-action: none;
+    }
+
+    .artifact:active {
+      cursor: grabbing;
+    }
+
+    @keyframes materialize {
+      from {
+        opacity: 0;
+        filter: blur(8px);
+        transform: translate(var(--x), var(--y)) scale(.96);
+      }
+
+      to {
+        opacity: 1;
+        filter: blur(0);
+        transform: translate(var(--x), var(--y)) scale(1);
+      }
+    }
+
+    .artifact figure {
+      margin: 0;
+      position: relative;
+    }
+
+    .artifact img {
+      width: var(--size, 100px);
+      height: auto;
+      display: block;
+      background: #ffffff;
+      box-shadow: 0 0 16px rgba(255,0,255,.5);
+      filter: saturate(.82) contrast(1.02);
+      transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      -webkit-user-drag: none;
+    }
+
+    .artifact:hover img {
+      transform: scale(1.04);
+      box-shadow: 0 0 16px rgba(255,0,255,.5);
+      filter: saturate(.92) contrast(1.05);
+    }
+
+    .artifact figcaption {
+      display: none;
+    }
+
+    .artifact .delete {
+      display: none;
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity .16s ease;
+      cursor: pointer;
+    }
+
+    button.delete,
+    .artifact .delete,
+    .delete {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    .artifact:hover .delete {
+      opacity: 1;
+    }
+
+    .panel {
+      position: fixed;
+      z-index: 2400;
+      width: min(360px, calc(100vw - 32px));
+      max-height: none;
+      background: rgba(0, 0, 0);
+      box-shadow: 0 22px 70px rgba(0,0,0,.18);
+      backdrop-filter: blur(12px);
+      cursor: default;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translate(0px, 0px) scale(.98);
+      transition: opacity .14s ease, visibility .14s ease, transform .14s ease;
+    }
+
+    .panel.open {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(0px, 0px) scale(1);
+    }
+
+    .panel-image {
+      display: none;
+    }
+
+    .panel-text {
+      font-family: "ABCsolar", sans-serif;
+      font-weight: 400;
+      color: #fff;
+      padding: 16px 18px 16px;
+      overflow: hidden;
+      background: transparent;
+      display: block;
+      line-height: 1.6;
+      letter-spacing: 0.01rem;
+    }
+
+    .panel-text h1 {
+      font-family: "ABCsolar", sans-serif;
+      font-weight: 320;
+      margin: 0 0 10px;
+      font-size: clamp(16px, 2vw, 20px);
+      line-height: 1.12;
+      letter-spacing:0;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 3px 10px;
+      margin: 0 0 10px;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      font-size: 9.5px;
+      line-height: 1.32;
+    }
+
+    .meta dt {
+      color: #ffffff;
+    }
+
+    .meta dd {
+      margin: 0;
+    }
+
+    .description {
+      color: rgba(255,255,255);
+      font-size: var(--caption-size, 11px);
+      line-height: 1.48;
+      white-space: pre-wrap;
+      user-select: text;
+      overflow: hidden;
+    }
+
+    .panel-note {
+      display: none;
+    }
+
+    .close {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        top: 16px;
+        left: 18px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .subtitle {
+        font-size: 9px;
+        max-width: 180px;
+      }
+
+      .tools {
+        top: auto;
+        right: 14px;
+        bottom: 16px;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        width: min(310px, calc(100vw - 28px));
+      }
+
+      button {
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+
+      .artifact,
+      .artifact img {
+        width: 100px;
+      }
+
+      .intro {
+        width: min(320px, calc(100vw - 36px));
+      }
+    }
