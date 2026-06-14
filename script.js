@@ -18,10 +18,10 @@ const POSTER_CATEGORY_TAB_CROP = {
     height: 126.4
 };
 const POSTER_TITLE_CROP = {
-    x: 40,
-    y: 17,
-    width: 632,
-    height: 166
+    x: 0,
+    y: 0,
+    width: 700,
+    height: 200
 };
 const OPTION_FIELDS = [
     {
@@ -875,7 +875,7 @@ function getPosterTabHeight(ctx, artifact, frameHeight, tabFontSize = 13) {
     const categoryWidth = ctx.measureText(categoryText).width;
     ctx.restore();
 
-    return Math.max(112, categoryWidth + 84);
+    return Math.min(frameHeight, Math.max(84, categoryWidth + 34));
 }
 
 function getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize) {
@@ -927,25 +927,68 @@ function drawPosterTab(ctx, x, y, width, height, radius, graphic) {
     return;
     }
 
-    drawRoundedRect(ctx, x, y, width, height, radius);
+    const r = Math.min(radius, width / 2, height / 2);
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x, y + height);
+    ctx.closePath();
     ctx.fill();
+}
+
+function splitPosterCategoryText(text) {
+    const words = String(text).split(/\s+/).filter(Boolean);
+
+    if (words.length < 2) return [String(text)];
+
+    let best = [String(text)];
+    let bestDiff = Infinity;
+
+    for (let index = 1; index < words.length; index++) {
+    const left = words.slice(0, index).join(" ");
+    const right = words.slice(index).join(" ");
+    const diff = Math.abs(left.length - right.length);
+
+    if (diff < bestDiff) {
+        best = [left, right];
+        bestDiff = diff;
+    }
+    }
+
+    return best;
 }
 
 function drawPosterCategoryLabel(ctx, text, x, y, maxWidth, fontSize) {
     let size = fontSize;
+    const minSize = 5.5;
 
     ctx.save();
     ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    do {
+    function setFont() {
     ctx.font = `${size}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
-    if (ctx.measureText(text).width <= maxWidth || size <= 6) break;
-    size -= 0.5;
-    } while (size > 6);
+    }
 
-    ctx.fillText(text, x, y);
+    setFont();
+
+    while (ctx.measureText(text).width > maxWidth && size > minSize) {
+    size -= 0.5;
+    setFont();
+    }
+
+    const widest = ctx.measureText(text).width;
+    const scaleX = widest > maxWidth ? maxWidth / widest : 1;
+
+    ctx.translate(x, y);
+    ctx.scale(scaleX, 1);
+    ctx.fillText(text, 0, 0);
+
     ctx.restore();
 }
 
@@ -1053,11 +1096,7 @@ async function loadPosterTitleGraphic() {
     }
 
     const svgText = await response.text();
-    const croppedSvg = svgText.replace(
-        /viewBox="[^"]+"/,
-        `viewBox="${POSTER_TITLE_CROP.x} ${POSTER_TITLE_CROP.y} ${POSTER_TITLE_CROP.width} ${POSTER_TITLE_CROP.height}"`
-    );
-    const blob = new Blob([croppedSvg], { type: "image/svg+xml" });
+    const blob = new Blob([svgText], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     const graphic = await loadPosterGraphic(url);
 
@@ -1129,9 +1168,11 @@ function drawPosterTitleFallback(ctx, width, height, box) {
 }
 
 async function drawPosterTitle(ctx, width, height, frameInset) {
+    const cropRatio = POSTER_TITLE_CROP.height / POSTER_TITLE_CROP.width;
+    const titleWidth = Math.min(605, Math.max(403, width * 0.46));
     const box = {
-    width: Math.min(504, Math.max(336, width * 0.384)),
-    height: Math.min(128, Math.max(89, height * 0.126))
+    width: titleWidth,
+    height: titleWidth * cropRatio
     };
 
     box.x = width - frameInset - box.width;
@@ -1144,14 +1185,12 @@ async function drawPosterTitle(ctx, width, height, frameInset) {
     return;
     }
 
-    const fitted = fitContain(box.width, box.height, svg.naturalWidth, svg.naturalHeight);
-
     ctx.drawImage(
     svg,
-    box.x + fitted.x,
-    box.y + fitted.y,
-    fitted.width,
-    fitted.height
+    box.x,
+    box.y,
+    box.width,
+    box.height
     );
 }
 
@@ -1167,8 +1206,8 @@ async function makePosterCanvas() {
     }
 
     const frame = 10;
-    const tabWidth = 46;
-    const tabFontSize = 11;
+    const tabWidth = 34;
+    const tabFontSize = 10;
     const bounds = getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize);
     const posterSideMargin = Math.max(94, Math.round(Math.max(bounds.width, bounds.height) * 0.1));
     const posterTopMargin = Math.max(58, Math.round(Math.max(bounds.width, bounds.height) * 0.055));
@@ -1186,7 +1225,7 @@ async function makePosterCanvas() {
 
     drawPosterBackground(ctx, posterWidth, posterHeight, posterFrameInset);
 
-    const categoryTabGraphic = await loadPosterCategoryGraphic();
+    const categoryTabGraphic = null;
 
     const originX = posterSideMargin - bounds.left;
     const originY = posterTopMargin - bounds.top;
@@ -1217,12 +1256,12 @@ async function makePosterCanvas() {
     drawPosterIdBadge(ctx, artifact, imageX + 8, imageY + 8);
 
     ctx.fillStyle = magenta;
-    drawPosterTab(ctx, frameX + frameWidth - 1, frameY, tabWidth, tabHeight, 16, categoryTabGraphic);
+    drawPosterTab(ctx, frameX + frameWidth - 1, frameY, tabWidth, tabHeight, 13, categoryTabGraphic);
 
     ctx.save();
-    ctx.translate(frameX + frameWidth + tabWidth / 2, frameY + tabHeight / 2);
+    ctx.translate(frameX + frameWidth + tabWidth * 0.34, frameY + tabHeight / 2);
     ctx.rotate(Math.PI / 2);
-    drawPosterCategoryLabel(ctx, categoryText, 0, 0, tabHeight - 36, tabFontSize);
+    drawPosterCategoryLabel(ctx, categoryText, 0, 0, tabHeight - 18, tabFontSize);
     ctx.restore();
     }
 
@@ -1418,6 +1457,7 @@ window.addEventListener("load", () => {
 const landing = document.getElementById("landing");
 const landingBrandBlock = document.querySelector(".landing-brand-block");
 const landingIntro = document.querySelector(".landing-intro");
+const mainBrand = document.querySelector(".brand");
 const enterBtn = document.getElementById("enterBtn");
 const guideBtn = document.getElementById("guideBtn");
 const closeGuideBtn = document.getElementById("closeGuideBtn");
@@ -1429,6 +1469,12 @@ landingBrandBlock.addEventListener("click", () => {
 
 enterBtn.addEventListener("click", () => {
   landing.classList.add("hidden");
+});
+
+if (mainBrand) mainBrand.addEventListener("click", () => {
+  closePanel();
+  landing.classList.remove("hidden");
+  landingGuide.classList.add("is-hidden");
 });
 
 guideBtn.addEventListener("click", () => {
