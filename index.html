@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fakekammer</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="asset/fakekammer_fabicon.png">
+  <link rel="icon" type="image/png" href="/asset/fakekammer_fabicon.png">
   <script>
   (function(d) {
     var config = {
@@ -20,6 +20,7 @@
 </head>
 
 <body>
+
   <header class="site-header">
     <div class="brand">Fakekammer</div>
     <div class="subtitle">a generated wunderkammer of doubtful objects</div>
@@ -35,14 +36,66 @@
   <nav class="tools" aria-label="archive controls">
     <button id="centerBtn" class="icon-btn" type="button" aria-label="back to center">reset view</button>
     <button id="saveBtn" type="button">save image</button>
+    <button id="printPosterBtn" type="button">print poster</button>
     <button id="clearBtn" type="button">clear</button>
   </nav>
 
+  <aside id="archivePicker" class="archive-picker" aria-label="archive image options">
+    <div class="archive-picker-default">
+      <button id="makeImageBtn" class="make-image-btn" type="button">make image</button>
+    </div>
+
+    <div id="pickerDetail" class="archive-picker-detail" aria-hidden="true">
+      <h2 id="pickerTitle"></h2>
+
+      <dl class="picker-meta">
+        <dt>ID</dt>
+        <dd id="pickerId"></dd>
+        <dt>Year</dt>
+        <dd id="pickerYear"></dd>
+        <dt>Reality mode</dt>
+        <dd id="pickerMode"></dd>
+        <dt>Status</dt>
+        <dd id="pickerStatus"></dd>
+        <dt>Value type</dt>
+        <dd id="pickerValue"></dd>
+      </dl>
+
+      <div id="pickerDesc" class="picker-description"></div>
+    </div>
+  </aside>
+
+  <div id="landing" class="landing">
+    <div class="landing-ui">
+      <header class="landing-brand-block">
+        <h1 class="landing-title">Fakekammer</h1>
+        <p class="landing-subtitle">A GENERATED WUNDERKAMMER OF DOUBTFUL OBJECTS</p>
+      </header>
+
+      <section class="landing-intro" aria-label="Fakekammer introduction">
+        Fakekammer는 한 수집가가 모은 ‘가짜들’로 이루어진 아카이브이자, 여전히 가짜로 남아 있는 것들과 진짜가 되어버린 가짜들을 통해 진위의 경계를 탐구하는 전시이다. 이 프로젝트는 중세의 ‘경이의 방(Wunderkammer)’을 모티프로 삼는다. 과거의 수집가들이 기이하고 희귀한 물건들을 한 방 안에 모아 자신만의 세계를 축소해 두었다면, Fakekammer는 ‘가짜’라는 공통된 키워드로 모인 기묘한 소우주를 구성한다. 진짜처럼 보이도록 정교하게 제작된 아카이브들을 통해, 사실과 허구의 경계가 어떻게 흔들리고 이동하는지를 시각적으로 드러낸다.
+      </section>
+
+      <section id="landingGuide" class="landing-guide is-hidden" aria-label="관람 방법">
+        <!--
+        <button id="closeGuideBtn" class="guide-close" type="button" aria-label="관람 방법 닫기">×</button>
+        -->
+      </section>
+
+      <div class="landing-controls">
+        <button id="guideBtn" class="enter-btn" type="button">how to navigate</button>
+        <button id="enterBtn" class="enter-btn" type="button">enter archive</button>
+      </div>
+    </div>
+  </div>
+
   <main id="stage" class="stage" aria-label="interactive fake archive">
+    <!--
     <div id="hint" class="hint">
       click the empty wall<br />
       to build your own fakekammer
     </div>
+    -->
   </main>
 
   <aside id="panel" class="panel" aria-hidden="true">
@@ -74,8 +127,9 @@
 
   <div class="panel-note">compact caption appears on image hover</div>
 
+  <script src="data.js"></script>
   <script src = "script.js"></script>
-  
+
 </body>
 
 </html>
