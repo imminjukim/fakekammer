@@ -1,5 +1,6 @@
 
 let remainingItems = [...ARCHIVE];
+const allArchiveItems = [...remainingItems];
 const stage = document.getElementById("stage");
 const hint = document.getElementById("hint");
 const panel = document.getElementById("panel");
@@ -10,9 +11,78 @@ const STAGE_HEIGHT = 7000;
 const POSTER_TITLE_GRAPHIC = "asset/poster-title.svg";
 const POSTER_CATEGORY_TAB_GRAPHIC = "asset/poster-category-tab.svg";
 const PRINT_WINDOW_FAVICON = "asset/fakekammer-favicon.svg";
+const OPTION_FIELDS = [
+    {
+        key: "medium",
+        label: "Medium",
+        fields: ["medium", "Medium"],
+        values: [
+            "artifact_object",
+            "digital",
+            "imaginary_object",
+            "machine",
+            "manuscript",
+            "map_diagram",
+            "painting_drawing",
+            "photograph_film",
+            "printed_book"
+        ]
+    },
+    {
+        key: "trustDevices",
+        label: "Trust_device",
+        fields: ["trustDevices", "trust_devices", "trust_device", "Trust_device"],
+        values: [
+            "aging_patina",
+            "aging_petina",
+            "cartographic_style",
+            "encyclopedic_layout",
+            "material_format",
+            "official_letterhead",
+            "provenance_docs",
+            "sacred_aura",
+            "scientific_format",
+            "seal_stamp",
+            "signature_handwriting",
+            "visual_element",
+            "visual_elements"
+        ]
+    },
+    {
+        key: "ambiguityStrategy",
+        label: "Ambiguity_strategy",
+        fields: ["ambiguityStrategy", "ambiguity_strategy", "Ambiguity_strategy"],
+        values: [
+            "author_masking",
+            "genre_blurring",
+            "invent_missing_link",
+            "mimic_existing_style",
+            "overload_information",
+            "partial_truth_mixing",
+            "partitial_truth_mixing",
+            "under_specify"
+        ]
+    }
+];
 
 const DISPLAY_TEXT = {
     category: {
+        /* "Abandoned Hypothesis": "폐기의 가설",
+        "Conceptual Form": "개념의 형상",
+        "Enigmatic Form": "수수께끼의 형상",
+        "Forgotten Legend": "망각의 전설",
+        "Form of Illusion": "환영의 형상",
+        "Living Legend": "살아있는 전설",
+        "Mythic Form": "신화적 형상",
+        "Mythic Prototype": "신화의 원형",
+        "Prototype of Verification": "검증의 원형",
+        "Record of Failure": "실패의 기록",
+        "Remembered Misbelief": "기억된 오해",
+        "Remnant of Lesson": "교훈의 잔재",
+        "Source of Curiosity": "호기심의 원천",
+        "Structure of Reference": "참조의 구조",
+        "Trace of Belief": "믿음의 흔적" */
+
         "Abandoned Hypothesis": "Abandoned Hypothesis",
         "Conceptual Form": "Conceptual Form",
         "Enigmatic Form": "Enigmatic Form",
@@ -30,40 +100,139 @@ const DISPLAY_TEXT = {
         "Trace of Belief": "Trace of Belief"
     },
     realityMode: {
-        realised_fake: "realised fake",
-        spent_fake: "spent fake"
+        realised_fake: "진짜가 된 가짜",
+        spent_fake: "가짜로 남은 가짜"
     },
     presentStatus: {
-        cautionary_case: "cautionary case",
-        cultual_icon: "cultual icon",
-        discarded_fake: "discarded fake",
-        theoretical_model: "theoretical model",
-        unresolved_mystery: "unresolved mystery"
+        cautionary_case: "경고의 사례",
+        cultual_icon: "문화의 상징",
+        cultural_icon: "문화의 상징",
+        discarded_fake: "사라진 가짜",
+        theoretical_model: "이론적 모델",
+        unresolved_mystery: "열린 미스터리"
     },
     valueType: {
-        aesthetic_value: "aesthetic value",
-        conceptual_value: "conceptual value",
-        educational_value: "educational value",
-        folkloric_value: "folkloric value",
-        historical_value: "historical value"
+        aesthetic_value: "미적 가치",
+        conceptual_value: "개념적 가치",
+        educational_value: "교육적 가치",
+        folkloric_value: "민속적 가치",
+        historical_value: "역사적 가치"
     },
     historicalStatus: {
-        fictional: "fictional",
-        forgery: "forgery",
-        hoax: "hoax",
-        undecidable: "undecidable"
+        fictional: "허구",
+        forgery: "위조",
+        hoax: "사기",
+        undecidable: "미결"
     },
-    medium: {},
-    materialType: {},
-    materialStrategy: {},
-    scriptType: {},
-    legibility: {},
-    intendedFunction: {},
-    targetAudience: {},
-    impactScope: {},
-    impactDomain: {},
-    trustDevices: {},
-    ambiguityStrategy: {}
+    medium: {
+        manuscript:"필사본",
+        printed_book:"인쇄물",
+        map_diagram:"지도 및 도표",
+        artifact_object:"유물 및 오브제",
+        painting_drawing:"회화 및 드로잉",
+        photograph_film:"사진 및 영상",
+        digital:"디지털",
+        imaginary_object:"상상 속 오브제",
+        machine:"기계"
+    },
+    materialType: {
+        parchment:"양피지",
+        paper:"종이",
+        stone:"석재",
+        bone:"뼈",
+        metal:"금속",
+        resin:"레진",
+        plastic:"플라스틱",
+        digital_only:"없음",
+        clay:"점토",
+        film:"필름",
+        jewel:"보석",
+        none:"없음",
+        wood:"목재"
+    },
+    materialStrategy: {
+        reused_old_material:"오래된 재료 활용",
+        similar_substitute:"유사 재료 활용",
+        artificial_aging:"인위적 노화",
+        hybrid_composite:"복합적 조합",
+        none:"없음"
+    },
+    scriptType: {
+        natural_language:"실제 언어",
+        pseudo_script:"유사 문자",
+        invented_language:"인공 언어",
+        asemic:"비의미 문자",
+        decorative_only:"장식 문자",
+        none:"없음"
+    },
+    legibility: {
+        readable:"해독 가능",
+        contested:"해독 논쟁 중",
+        unreadable:"해독 불가",
+        none:"없음"
+    },
+    intendedFunction: {
+        religious_legitimacy:"종교적 정당화",
+        political_propaganda:"정치적 선전",
+        scientific_evidence:"과학적 증거 제시",
+        literary_entertainment:"문학적 유희",
+        market_fraud:"시장 사기",
+        artistic_experiment:"예술적 실험",
+        identity_myth:"정체성 신화",
+        research_fabrication:"연구 조작",
+        recognition_seeking:"인정 추구",
+        media_literacy:"미디어 리터러시",
+        parody:"패러디",
+        "playful intent":"유희적 의도",
+        playful_intent:"유희적 의도",
+        unknown:"미상"
+    },
+    targetAudience: {
+        scholars:"학자 및 연구자",
+        believers:"성직자 및 신자",
+        general_public:"일반 대중",
+        collectors:"수집가 및 박물관",
+        institutions:"제도 및 기관",
+        unknown:"미상"
+    },
+    impactScope: {
+        none:"영향 없음",
+        symbolic:"상징적 영향",
+        institutional:"제도적 영향",
+        violent:"폭력적 영향"
+    },
+    impactDomain: {
+        religious:"종교",
+        scientific:"과학",
+        political:"정치",
+        cultural:"문화",
+        economic:"경제"
+    },
+    trustDevices: {
+        official_letterhead:"공식 문서 양식",
+        seal_stamp:"인장 및 직인",
+        signature_handwriting:"자필 서명",
+        aging_patina:"세월의 흔적",
+        provenance_docs:"문서 및 보증서",
+        sacred_aura:"성스러운 분위기",
+        material_format:"물질적 형식",
+        scientific_format:"과학적 형식",
+        cartographic_style:"지도 및 도식화",
+        encyclopedic_layout:"도감 및 백과사전",
+        aging_petina:"세월의 흔적",
+        visual_element:"시각적 요소",
+        visual_elements:"시각적 요소"
+    },
+    ambiguityStrategy: {
+        mimic_existing_style:"기존 양식 모방",
+        invent_missing_link:"잃어버린 연결고리 창작",
+        overload_information:"정보 과잉",
+        under_specify:"의도적 모호성",
+        genre_blurring:"장르 혼합",
+        author_masking:"저자 위장",
+        partial_truth_mixing:"사실과 허구의 혼합",
+        partitial_truth_mixing:"사실과 허구의 혼합"
+    }
 };
 
 function displayArchiveValue(field, value) {
@@ -77,6 +246,146 @@ function displayArchiveValue(field, value) {
     .filter(Boolean)
     .map(part => map[part] || part.replaceAll("_", " "))
     .join(", ");
+}
+
+function splitArchiveValues(value) {
+    return String(value || "")
+    .split(",")
+    .map(part => part.trim())
+    .filter(Boolean);
+}
+
+const OPTION_VALUE_ALIASES = {
+    aging_petina: "aging_patina",
+    visual_elements: "visual_element",
+    partitial_truth_mixing: "partial_truth_mixing"
+};
+
+function normalizeOptionValue(value) {
+    return OPTION_VALUE_ALIASES[value] || value;
+}
+
+function getOptionValues(field) {
+    const definition = OPTION_FIELDS.find(option => option.key === field);
+    const values = new Set();
+
+    (definition?.values || []).forEach(value => values.add(normalizeOptionValue(value)));
+    Object.keys(DISPLAY_TEXT[field] || {}).forEach(value => values.add(normalizeOptionValue(value)));
+
+    allArchiveItems.forEach(item => {
+    getItemFieldValues(item, field).forEach(value => values.add(normalizeOptionValue(value)));
+    });
+
+    return [...values].sort((a, b) => displayArchiveValue(field, a).localeCompare(displayArchiveValue(field, b), "ko"));
+}
+
+function getItemFieldValues(item, field) {
+    const definition = OPTION_FIELDS.find(option => option.key === field);
+    const fields = definition?.fields || [field];
+
+    return fields.flatMap(key => splitArchiveValues(item[key]));
+}
+
+function getSelectedOptions() {
+    return OPTION_FIELDS.reduce((selected, field) => {
+    const checked = document.querySelector(`input[name="${field.key}"]:checked`);
+
+    if (checked) selected[field.key] = checked.value;
+
+    return selected;
+    }, {});
+}
+
+function isOptionSelectionComplete() {
+    const selected = getSelectedOptions();
+
+    return OPTION_FIELDS.every(field => selected[field.key]);
+}
+
+function updateMakeImageState() {
+    const makeImageBtn = document.getElementById("makeImageBtn");
+
+    makeImageBtn.disabled = !isOptionSelectionComplete();
+}
+
+function itemMatchesOptions(item, selected) {
+    return OPTION_FIELDS.every(field => {
+    const selectedValue = normalizeOptionValue(selected[field.key]);
+    const itemValues = getItemFieldValues(item, field.key).map(normalizeOptionValue);
+
+    return itemValues.includes(selectedValue);
+    });
+}
+
+function optionMatchScore(item, selected) {
+    return OPTION_FIELDS.reduce((score, field) => {
+    const selectedValue = normalizeOptionValue(selected[field.key]);
+    const itemValues = getItemFieldValues(item, field.key).map(normalizeOptionValue);
+
+    return score + (itemValues.includes(selectedValue) ? 1 : 0);
+    }, 0);
+}
+
+function selectedOptionItem() {
+    const selected = getSelectedOptions();
+
+    if (!isOptionSelectionComplete()) return null;
+
+    const matches = allArchiveItems.filter(item => itemMatchesOptions(item, selected));
+
+    if (matches.length > 0) {
+    return matches[Math.floor(Math.random() * matches.length)];
+    }
+
+    const scoredMatches = allArchiveItems
+    .map(item => ({ item, score: optionMatchScore(item, selected) }))
+    .filter(match => match.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+    if (scoredMatches.length === 0) return null;
+
+    const bestScore = scoredMatches[0].score;
+    const closestMatches = scoredMatches
+    .filter(match => match.score === bestScore)
+    .map(match => match.item);
+
+    return closestMatches[Math.floor(Math.random() * closestMatches.length)];
+}
+
+function buildImageMakerOptions() {
+    const form = document.getElementById("imageMakerOptions");
+
+    if (!form) return;
+
+    if (form.querySelector("input")) {
+    form.addEventListener("change", updateMakeImageState);
+    updateMakeImageState();
+    return;
+    }
+
+    form.innerHTML = OPTION_FIELDS.map(field => {
+    const options = getOptionValues(field).map(value => {
+        const id = `${field.key}-${value.replace(/[^a-z0-9]+/gi, "-")}`;
+        const label = displayArchiveValue(field.key, value);
+
+        return `
+        <label class="image-option" for="${escapeHtml(id)}">
+            <input id="${escapeHtml(id)}" type="radio" name="${escapeHtml(field.key)}" value="${escapeHtml(value)}">
+            <span>${escapeHtml(label)}</span>
+        </label>
+        `;
+    }).join("");
+
+    return `
+    <fieldset class="image-option-group">
+        <legend>${escapeHtml(field.label)}</legend>
+        <div class="image-option-list">${options}</div>
+    </fieldset>
+    `;
+    }).join("");
+
+    form.addEventListener("change", updateMakeImageState);
+    updateMakeImageState();
 }
 
 const initialViewport = {
@@ -604,6 +913,24 @@ function drawPosterCategoryLabel(ctx, text, x, y, maxWidth, fontSize) {
     ctx.restore();
 }
 
+function drawPosterIdBadge(ctx, artifact, x, y) {
+    const idText = String(artifact.item?.id ?? artifact.index + 1).padStart(2, "0");
+    const radius = 13;
+
+    ctx.save();
+    ctx.fillStyle = "#ff00ff";
+    ctx.beginPath();
+    ctx.arc(x + radius, y + radius, radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "600 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(idText, x + radius, y + radius + 0.5);
+    ctx.restore();
+}
+
 function drawPosterBackground(ctx, width, height) {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
@@ -773,6 +1100,8 @@ async function makePosterCanvas() {
         ctx.fillRect(imageX, imageY, rect.width, rect.height);
     }
 
+    drawPosterIdBadge(ctx, artifact, imageX + 8, imageY + 8);
+
     ctx.fillStyle = magenta;
     drawPosterTab(ctx, frameX + frameWidth - 1, frameY, tabWidth, tabHeight, 16, categoryTabGraphic);
 
@@ -891,12 +1220,33 @@ document.getElementById("archivePicker").addEventListener("click", e => {
 document.getElementById("makeImageBtn").addEventListener("click", e => {
     e.stopPropagation();
 
+    if (!isOptionSelectionComplete()) return;
+
+    const item = selectedOptionItem();
+
+    if (!item) {
+    alert("선택한 조건에 맞는 이미지가 없습니다.");
+    return;
+    }
+
+    const center = screenToWorld(window.innerWidth * 0.62, window.innerHeight * 0.46);
+    const offsetX = Math.floor((Math.random() - 0.5) * 260);
+    const offsetY = Math.floor((Math.random() - 0.5) * 220);
+
+    createArtifact(item, center.x + offsetX, center.y + offsetY);
+});
+
+document.getElementById("randomImageBtn").addEventListener("click", e => {
+    e.stopPropagation();
+
     const center = screenToWorld(window.innerWidth * 0.62, window.innerHeight * 0.46);
     const offsetX = Math.floor((Math.random() - 0.5) * 260);
     const offsetY = Math.floor((Math.random() - 0.5) * 220);
 
     createArtifact(randomItem(), center.x + offsetX, center.y + offsetY);
 });
+
+buildImageMakerOptions();
 
 closeBtn.addEventListener("click", closePanel);
 

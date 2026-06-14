@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Fakekammer</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="/asset/fakekammer_fabicon.png">
+  <link rel="icon" type="image/png" href="asset/fakekammer_favicon.png">
   <script>
   (function(d) {
     var config = {
@@ -42,7 +42,57 @@
 
   <aside id="archivePicker" class="archive-picker" aria-label="archive image options">
     <div class="archive-picker-default">
-      <button id="makeImageBtn" class="make-image-btn" type="button">make image</button>
+      <h2 class="image-maker-title">Image maker</h2>
+      <form id="imageMakerOptions" class="image-maker-options" aria-label="image maker options">
+        <fieldset class="image-option-group">
+          <legend>Medium</legend>
+          <div class="image-option-list">
+            <label class="image-option"><input type="radio" name="medium" value="artifact_object"><span>유물 및 오브제</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="digital"><span>디지털</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="imaginary_object"><span>상상 속 오브제</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="machine"><span>기계</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="manuscript"><span>필사본</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="map_diagram"><span>지도 및 도표</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="painting_drawing"><span>회화 및 드로잉</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="photograph_film"><span>사진 및 영상</span></label>
+            <label class="image-option"><input type="radio" name="medium" value="printed_book"><span>인쇄물</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="image-option-group">
+          <legend>Trust_device</legend>
+          <div class="image-option-list">
+            <label class="image-option"><input type="radio" name="trustDevices" value="aging_patina"><span>세월의 흔적</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="cartographic_style"><span>지도 및 도식화</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="encyclopedic_layout"><span>도감 및 백과사전</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="material_format"><span>물질적 형식</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="official_letterhead"><span>공식 문서 양식</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="provenance_docs"><span>문서 및 보증서</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="sacred_aura"><span>성스러운 분위기</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="scientific_format"><span>과학적 형식</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="seal_stamp"><span>인장 및 직인</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="signature_handwriting"><span>자필 서명</span></label>
+            <label class="image-option"><input type="radio" name="trustDevices" value="visual_element"><span>시각적 요소</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="image-option-group">
+          <legend>Ambiguity_strategy</legend>
+          <div class="image-option-list">
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="author_masking"><span>저자 위장</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="genre_blurring"><span>장르 혼합</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="invent_missing_link"><span>잃어버린 연결고리 창작</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="mimic_existing_style"><span>기존 양식 모방</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="overload_information"><span>정보 과잉</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="partial_truth_mixing"><span>사실과 허구의 혼합</span></label>
+            <label class="image-option"><input type="radio" name="ambiguityStrategy" value="under_specify"><span>의도적 모호성</span></label>
+          </div>
+        </fieldset>
+      </form>
+      <div class="image-maker-actions">
+        <button id="makeImageBtn" class="make-image-btn" type="button" disabled>make image</button>
+        <button id="randomImageBtn" class="make-image-btn" type="button">random image</button>
+      </div>
     </div>
 
     <div id="pickerDetail" class="archive-picker-detail" aria-hidden="true">
@@ -73,10 +123,17 @@
       </header>
 
       <section class="landing-intro" aria-label="Fakekammer introduction">
-        Fakekammer는 한 수집가가 모은 ‘가짜들’로 이루어진 아카이브이자, 여전히 가짜로 남아 있는 것들과 진짜가 되어버린 가짜들을 통해 진위의 경계를 탐구하는 전시이다. 이 프로젝트는 중세의 ‘경이의 방(Wunderkammer)’을 모티프로 삼는다. 과거의 수집가들이 기이하고 희귀한 물건들을 한 방 안에 모아 자신만의 세계를 축소해 두었다면, Fakekammer는 ‘가짜’라는 공통된 키워드로 모인 기묘한 소우주를 구성한다. 진짜처럼 보이도록 정교하게 제작된 아카이브들을 통해, 사실과 허구의 경계가 어떻게 흔들리고 이동하는지를 시각적으로 드러낸다.
+        <h2 class="landing-panel-title">Exhibition introduction</h2>
+        <p>
+          Fakekammer는 한 수집가가 모은 ‘가짜들’로 이루어진 아카이브이자, 여전히 가짜로 남아 있는 것들과 진짜가 되어버린 가짜들을 통해 진위의 경계를 탐구하는 전시이다. 이 프로젝트는 중세의 ‘경이의 방(Wunderkammer)’을 모티프로 삼는다. 과거의 수집가들이 기이하고 희귀한 물건들을 한 방 안에 모아 자신만의 세계를 축소해 두었다면, Fakekammer는 ‘가짜’라는 공통된 키워드로 모인 기묘한 소우주를 구성한다. 진짜처럼 보이도록 정교하게 제작된 아카이브들을 통해, 사실과 허구의 경계가 어떻게 흔들리고 이동하는지를 시각적으로 드러낸다.
+        </p>
       </section>
 
       <section id="landingGuide" class="landing-guide is-hidden" aria-label="관람 방법">
+        <h2 class="landing-panel-title">Welcome to Fakekammer</h2>
+        <div class="landing-guide-graphic" aria-hidden="true">
+          <!-- 관람 방법 SVG 파일을 넣을 자리 -->
+        </div>
         <!--
         <button id="closeGuideBtn" class="guide-close" type="button" aria-label="관람 방법 닫기">×</button>
         -->
