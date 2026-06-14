@@ -21,9 +21,15 @@ font-display: swap
   --control-padding: 0 22px;
   --control-font-size: 14px;
   --control-font-weight: 600;
-  --cursor-default: url("data:image/svg+xml,%3Csvg width='28' height='28' viewBox='0 0 28 28' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='14' cy='14' r='5.5' fill='none' stroke='%23ff00ff' stroke-width='2'/%3E%3Cpath d='M14 2v7M14 19v7M2 14h7M19 14h7' stroke='%23181818' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 14 14, crosshair;
+  --option-title-font: "ABCsolar", sans-serif;
+  --option-title-size: 18px;
+  --option-title-weight: 500;
+  --option-label-font: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --option-label-size: 14px;
+  --option-label-weight: 700;
+  --cursor-default: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 5l16 10-7 2.2 4 6.9-3.8 2.2-4-6.9-5.2 5.2V5z' fill='%23ff00ff' stroke='%23181818' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") 7 5, pointer;
   --cursor-action: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 5l16 10-7 2.2 4 6.9-3.8 2.2-4-6.9-5.2 5.2V5z' fill='%23ff00ff' stroke='%23181818' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") 7 5, pointer;
-  --cursor-title: url("data:image/svg+xml,%3Csvg width='34' height='34' viewBox='0 0 34 34' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='17' cy='17' r='12' fill='%23ff00ff'/%3E%3Ctext x='17' y='22' text-anchor='middle' font-size='18' font-family='acid-green, Arial, sans-serif' font-weight='400' fill='white'%3E%3F%3C/text%3E%3C/svg%3E") 17 17, help;
+  --cursor-title: url("data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%20%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20id%3D%22_%EB%A0%88%EC%9D%B4%EC%96%B4_1%22%20data-name%3D%22%EB%A0%88%EC%9D%B4%EC%96%B4%201%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%3E%20%3Cdefs%3E%20%3Cstyle%3E%20.cls-1%20%7B%20fill%3A%20%23f0f%3B%20%7D%20.cls-2%20%7B%20fill%3A%20%23fff%3B%20%7D%20%3C%2Fstyle%3E%20%3C%2Fdefs%3E%20%3Ccircle%20class%3D%22cls-1%22%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%2224%22%2F%3E%20%3Cpath%20class%3D%22cls-2%22%20d%3D%22M23.71%2C7.22c5.27%2C0%2C7.79%2C3.99%2C7.79%2C8.4%2C0%2C6.12-5.36%2C7.36-5.36%2C10.39%2C0%2C1.66.09%2C3.28-1.76%2C3.28-1.95%2C0-1.71-1.9-1.71-3.46%2C0-3.85%2C3.28-3.56%2C3.28-6.17%2C0-1.28-.52-3.09-2.42-3.09-4.79%2C0-2.42%2C4.84-4.32%2C4.84-2.37%2C0-2.71-3.04-2.71-5.27%2C0-3.46%2C1.04-8.92%2C7.21-8.92ZM20.77%2C36.08c0-2.56%2C1.09-5.51%2C3.75-5.51s3.8%2C2.52%2C3.8%2C5.17-1.04%2C5.03-3.61%2C5.03c-2.75%2C0-3.94-1.99-3.94-4.7Z%22%2F%3E%20%3C%2Fsvg%3E") 16 16, help;
   --cursor-artifact: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff00ff'/%3E%3Cpath d='M16 2v28M2 16h28M8 8l16 16M24 8L8 24' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, grab;
   --cursor-dragging: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='16' cy='16' r='9' fill='%23181818'/%3E%3Cpath d='M16 4v24M4 16h24M9 9l14 14M23 9L9 23' stroke='%23ff00ff' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") 16 16, grabbing;
 }
@@ -154,7 +160,7 @@ body.ready {
   color: #fff;
   font-family: "Apple SD Gothic Neo", "ABCsolar", sans-serif;
   font-size: clamp(11px, .9vw, 14px);
-  font-weight: 600;
+  font-weight: 650;
   line-height: 1.55;
   word-break: keep-all;
   z-index: 2;
@@ -410,7 +416,7 @@ button {
   pointer-events: auto;
   cursor: default;
   transition:
-    background-color .2s ease,
+    background .2s ease,
     color .2s ease;
 }
 
@@ -472,9 +478,9 @@ button {
   margin: 0 2px 10px;
   padding: 0;
   color: #fff;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
-  font-size: 16px;
-  font-weight: 600;
+  font-family: var(--option-title-font);
+  font-size: var(--option-title-size);
+  font-weight: var(--option-title-weight);
   line-height: 1;
 }
 
@@ -488,9 +494,9 @@ button {
   display: inline-flex;
   align-items: center;
   min-width: 0;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  font-family: var(--option-label-font);
+  font-size: var(--option-label-size);
+  font-weight: var(--option-label-weight);
   line-height: 1;
   cursor: var(--cursor-action);
 }
@@ -571,7 +577,10 @@ button {
 
 .archive-picker-detail {
   position: absolute;
-  inset: 42px 34px;
+  inset: 6px;
+  padding: 34px 30px 30px;
+  border-radius: 46px;
+  background: #fff;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -583,7 +592,7 @@ button {
 }
 
 .archive-picker.has-detail {
-  background: #fff;
+  background: linear-gradient(180deg, #f7f7f7 0%, #cfcfcf 100%) border-box;
   color: var(--black);
 }
 
@@ -599,8 +608,33 @@ button {
   pointer-events: auto;
 }
 
+.picker-title-group {
+  margin: 0 0 28px;
+}
+
+.picker-title-kr,
+.picker-title-en {
+  margin: 0;
+  color: var(--black);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.picker-title-kr {
+  font-family: "Apple SD Gothic Neo", sans-serif;
+  font-size: clamp(28px, 1.8vw, 34px);
+  font-weight: 800;
+}
+
+.picker-title-en {
+  margin-top: 0px;
+  font-family: "ABCsolar", sans-serif;
+  font-size: clamp(27px, 2.2vw, 40px);
+  font-weight: 500;
+}
+
 .archive-picker-detail h2 {
-  margin: 0 0 18px;
+  margin: 0;
   font-size: clamp(22px, 2vw, 32px);
   font-weight: 600;
   line-height: 1.16;
@@ -609,28 +643,36 @@ button {
 
 .picker-meta {
   display: grid;
-  grid-template-columns: 94px 1fr;
-  gap: 5px 12px;
-  margin: 0 0 20px;
+  grid-template-columns: minmax(130px, .9fr) 1fr;
+  gap: 6px 18px;
+  margin: 0 0 24px;
   padding: 0;
-  font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.18;
 }
 
 .picker-meta dt {
   color: var(--black);
-  font-weight: 600;
+  font-family: "ABCsolar", sans-serif;
+  font-size: clamp(13px, .98vw, 16px);
+  font-weight: 500;
 }
 
 .picker-meta dd {
   margin: 0;
+  font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-size: clamp(13px, .9vw, 15px);
+  font-weight: 800;
 }
 
 .picker-description {
-  font-family: "Apple SD Gothic Neo", "ABCsolar", sans-serif;
-  font-size: clamp(12px, .95vw, 14px);
+  font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: clamp(12px, .9vw, 14px);
   font-weight: 600;
-  line-height: 1.56;
+  line-height: 1.58;
+  text-align: left;
   word-break: keep-all;
   overflow: hidden;
 }
@@ -651,7 +693,7 @@ body:has(.artifact:hover) .stage {
 }
 
 body.detail-open .archive-picker {
-  background: #fff;
+  background: linear-gradient(180deg, #f7f7f7 0%, #cfcfcf 100%) border-box;
   color: var(--black);
 }
 

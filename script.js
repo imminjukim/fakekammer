@@ -8,9 +8,21 @@ const closeBtn = document.getElementById("closeBtn");
 const archivePicker = document.getElementById("archivePicker");
 const STAGE_WIDTH = 10000;
 const STAGE_HEIGHT = 7000;
-const POSTER_TITLE_GRAPHIC = "asset/poster-title.svg";
-const POSTER_CATEGORY_TAB_GRAPHIC = "asset/poster-category-tab.svg";
-const PRINT_WINDOW_FAVICON = "asset/fakekammer-favicon.svg";
+const POSTER_TITLE_GRAPHIC = "asset/poster_title.svg";
+const POSTER_CATEGORY_TAB_GRAPHIC = "asset/poster_category.svg";
+const PRINT_WINDOW_FAVICON = "asset/poster_favicon.png";
+const POSTER_CATEGORY_TAB_CROP = {
+    x: 26.9,
+    y: 21.3,
+    width: 32.1,
+    height: 126.4
+};
+const POSTER_TITLE_CROP = {
+    x: 40,
+    y: 17,
+    width: 632,
+    height: 166
+};
 const OPTION_FIELDS = [
     {
         key: "medium",
@@ -30,7 +42,7 @@ const OPTION_FIELDS = [
     },
     {
         key: "trustDevices",
-        label: "Trust_device",
+        label: "Trust device",
         fields: ["trustDevices", "trust_devices", "trust_device", "Trust_device"],
         values: [
             "aging_patina",
@@ -50,7 +62,7 @@ const OPTION_FIELDS = [
     },
     {
         key: "ambiguityStrategy",
-        label: "Ambiguity_strategy",
+        label: "Ambiguity strategy",
         fields: ["ambiguityStrategy", "ambiguity_strategy", "Ambiguity_strategy"],
         values: [
             "author_masking",
@@ -331,14 +343,21 @@ function selectedOptionItem() {
 
     if (!isOptionSelectionComplete()) return null;
 
+    const placedIds = getPlacedItemIds();
     const matches = allArchiveItems.filter(item => itemMatchesOptions(item, selected));
+    const unplacedMatches = matches.filter(item => !placedIds.has(String(item.id)));
+
+    if (unplacedMatches.length > 0) {
+    return unplacedMatches[Math.floor(Math.random() * unplacedMatches.length)];
+    }
 
     if (matches.length > 0) {
-    return matches[Math.floor(Math.random() * matches.length)];
+    return null;
     }
 
     const scoredMatches = allArchiveItems
     .map(item => ({ item, score: optionMatchScore(item, selected) }))
+    .filter(match => !placedIds.has(String(match.item.id)))
     .filter(match => match.score > 0)
     .sort((a, b) => b.score - a.score);
 
@@ -457,16 +476,32 @@ function imageWithFallback(img, base) {
 }
 
 function randomItem() {
-    if (remainingItems.length === 0) {
-    remainingItems = [...ARCHIVE];
-    }
+    const placedIds = getPlacedItemIds();
+    const availableItems = allArchiveItems.filter(item => !placedIds.has(String(item.id)));
 
+    if (availableItems.length === 0) return null;
+
+    remainingItems = remainingItems.filter(item => !placedIds.has(String(item.id)));
+
+    if (remainingItems.length === 0) {
+    remainingItems = [...availableItems];
+    }
     const index = Math.floor(Math.random() * remainingItems.length);
 
     return remainingItems.splice(index, 1)[0];
 }
 
+function getPlacedItemIds() {
+    return new Set(
+    [...document.querySelectorAll(".artifact")]
+        .map(el => el.dataset.id)
+        .filter(Boolean)
+    );
+}
+
 function createArtifact(item = randomItem(), x = null, y = null) {
+    if (!item) return null;
+
     if (hint) hint.classList.add("hidden");
 
     const el = document.createElement("article");
@@ -603,9 +638,10 @@ function makeDraggable(el) {
 }
 
 function openPanel(item, imgSrc, anchor) {
-    document.getElementById("pickerTitle").textContent = item.title || "Untitled object";
-    document.getElementById("pickerId").textContent = "FAKE_" + String(item.id).padStart(2, "0");
+    document.getElementById("pickerKrTitle").textContent = item.krTitle || item.title || "제목 없음";
+    document.getElementById("pickerEnTitle").textContent = item.enTitle || item.title || "Untitled object";
     document.getElementById("pickerYear").textContent = item.year || "unknown";
+    document.getElementById("pickerHistorical").textContent = displayArchiveValue("historicalStatus", item.historicalStatus) || "undecidable";
     document.getElementById("pickerMode").textContent = displayArchiveValue("realityMode", item.realityMode) || "uncertain";
     document.getElementById("pickerStatus").textContent = displayArchiveValue("presentStatus", item.presentStatus) || "unverified";
     document.getElementById("pickerValue").textContent = displayArchiveValue("valueType", item.valueType) || "ambiguous";
@@ -839,7 +875,7 @@ function getPosterTabHeight(ctx, artifact, frameHeight, tabFontSize = 13) {
     const categoryWidth = ctx.measureText(categoryText).width;
     ctx.restore();
 
-    return Math.max(96, Math.min(frameHeight + 64, categoryWidth + 44));
+    return Math.max(112, categoryWidth + 84);
 }
 
 function getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize) {
@@ -905,9 +941,9 @@ function drawPosterCategoryLabel(ctx, text, x, y, maxWidth, fontSize) {
 
     do {
     ctx.font = `${size}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
-    if (ctx.measureText(text).width <= maxWidth || size <= 9) break;
+    if (ctx.measureText(text).width <= maxWidth || size <= 6) break;
     size -= 0.5;
-    } while (size > 9);
+    } while (size > 6);
 
     ctx.fillText(text, x, y);
     ctx.restore();
@@ -931,21 +967,28 @@ function drawPosterIdBadge(ctx, artifact, x, y) {
     ctx.restore();
 }
 
-function drawPosterBackground(ctx, width, height) {
-    ctx.fillStyle = "#ffffff";
+function drawPosterBackground(ctx, width, height, frameInset) {
+    ctx.fillStyle = "#ff00ff";
     ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(frameInset, frameInset, width - frameInset * 2, height - frameInset * 2);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(frameInset, frameInset, width - frameInset * 2, height - frameInset * 2);
+    ctx.clip();
 
     ctx.fillStyle = "rgba(0,0,0,.28)";
 
-    for (let x = 28; x < width; x += 36) {
-    for (let y = 28; y < height; y += 36) {
+    for (let x = frameInset + 20; x < width - frameInset; x += 36) {
+    for (let y = frameInset + 20; y < height - frameInset; y += 36) {
         ctx.beginPath();
         ctx.arc(x, y, 0.8, 0, Math.PI * 2);
         ctx.fill();
     }
     }
 
-    ctx.save();
     ctx.font = "16px ABCsolar, Apple SD Gothic Neo, sans-serif";
     ctx.fillStyle = "rgba(255,0,255,.1)";
     ctx.textAlign = "center";
@@ -975,6 +1018,76 @@ function loadPosterGraphic(src) {
     img.onerror = () => resolve(null);
     img.src = src;
     });
+}
+
+async function loadPosterCategoryGraphic() {
+    try {
+    const response = await fetch(POSTER_CATEGORY_TAB_GRAPHIC);
+
+    if (!response.ok) {
+        return loadPosterGraphic(POSTER_CATEGORY_TAB_GRAPHIC);
+    }
+
+    const svgText = await response.text();
+    const croppedSvg = svgText.replace(
+        /viewBox="[^"]+"/,
+        `viewBox="${POSTER_CATEGORY_TAB_CROP.x} ${POSTER_CATEGORY_TAB_CROP.y} ${POSTER_CATEGORY_TAB_CROP.width} ${POSTER_CATEGORY_TAB_CROP.height}"`
+    );
+    const blob = new Blob([croppedSvg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const graphic = await loadPosterGraphic(url);
+
+    URL.revokeObjectURL(url);
+    return graphic;
+    } catch (err) {
+    return loadPosterGraphic(POSTER_CATEGORY_TAB_GRAPHIC);
+    }
+}
+
+async function loadPosterTitleGraphic() {
+    try {
+    const response = await fetch(POSTER_TITLE_GRAPHIC);
+
+    if (!response.ok) {
+        return loadPosterGraphic(POSTER_TITLE_GRAPHIC);
+    }
+
+    const svgText = await response.text();
+    const croppedSvg = svgText.replace(
+        /viewBox="[^"]+"/,
+        `viewBox="${POSTER_TITLE_CROP.x} ${POSTER_TITLE_CROP.y} ${POSTER_TITLE_CROP.width} ${POSTER_TITLE_CROP.height}"`
+    );
+    const blob = new Blob([croppedSvg], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const graphic = await loadPosterGraphic(url);
+
+    URL.revokeObjectURL(url);
+    return graphic;
+    } catch (err) {
+    return loadPosterGraphic(POSTER_TITLE_GRAPHIC);
+    }
+}
+
+async function getAssetDataUrl(src) {
+    try {
+    const response = await fetch(src);
+
+    if (!response.ok) {
+        return new URL(src, window.location.href).href;
+    }
+
+    const blob = await response.blob();
+
+    return await new Promise(resolve => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(new URL(src, window.location.href).href);
+        reader.readAsDataURL(blob);
+    });
+    } catch (err) {
+    return new URL(src, window.location.href).href;
+    }
 }
 
 function fitContain(boxWidth, boxHeight, imageWidth, imageHeight) {
@@ -1015,16 +1128,16 @@ function drawPosterTitleFallback(ctx, width, height, box) {
     ctx.restore();
 }
 
-async function drawPosterTitle(ctx, width, height) {
+async function drawPosterTitle(ctx, width, height, frameInset) {
     const box = {
-    width: Math.min(420, Math.max(280, width * 0.32)),
-    height: Math.min(126, Math.max(86, height * 0.13))
+    width: Math.min(504, Math.max(336, width * 0.384)),
+    height: Math.min(128, Math.max(89, height * 0.126))
     };
 
-    box.x = width - box.width - 56;
-    box.y = height - box.height - 42;
+    box.x = width - frameInset - box.width;
+    box.y = height - frameInset - box.height;
 
-    const svg = await loadPosterGraphic(POSTER_TITLE_GRAPHIC);
+    const svg = await loadPosterTitleGraphic();
 
     if (!svg || !svg.naturalWidth || !svg.naturalHeight) {
     drawPosterTitleFallback(ctx, width, height, box);
@@ -1054,14 +1167,15 @@ async function makePosterCanvas() {
     }
 
     const frame = 10;
-    const tabWidth = 36;
-    const tabFontSize = 12;
+    const tabWidth = 46;
+    const tabFontSize = 11;
     const bounds = getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize);
     const posterSideMargin = Math.max(94, Math.round(Math.max(bounds.width, bounds.height) * 0.1));
     const posterTopMargin = Math.max(58, Math.round(Math.max(bounds.width, bounds.height) * 0.055));
-    const posterBottomMargin = posterSideMargin;
+    const posterBottomMargin = Math.max(posterSideMargin, 190);
     const posterWidth = Math.round(bounds.width + posterSideMargin * 2);
     const posterHeight = Math.round(bounds.height + posterTopMargin + posterBottomMargin);
+    const posterFrameInset = 18;
     const exportScale = Math.min(2, window.devicePixelRatio || 1);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -1070,9 +1184,9 @@ async function makePosterCanvas() {
     canvas.height = Math.round(posterHeight * exportScale);
     ctx.scale(exportScale, exportScale);
 
-    drawPosterBackground(ctx, posterWidth, posterHeight);
+    drawPosterBackground(ctx, posterWidth, posterHeight, posterFrameInset);
 
-    const categoryTabGraphic = await loadPosterGraphic(POSTER_CATEGORY_TAB_GRAPHIC);
+    const categoryTabGraphic = await loadPosterCategoryGraphic();
 
     const originX = posterSideMargin - bounds.left;
     const originY = posterTopMargin - bounds.top;
@@ -1108,15 +1222,15 @@ async function makePosterCanvas() {
     ctx.save();
     ctx.translate(frameX + frameWidth + tabWidth / 2, frameY + tabHeight / 2);
     ctx.rotate(Math.PI / 2);
-    drawPosterCategoryLabel(ctx, categoryText, 0, 0, tabHeight - 14, tabFontSize);
+    drawPosterCategoryLabel(ctx, categoryText, 0, 0, tabHeight - 36, tabFontSize);
     ctx.restore();
     }
 
     ctx.strokeStyle = magenta;
-    ctx.lineWidth = 12;
-    ctx.strokeRect(17, 17, posterWidth - 34, posterHeight - 34);
+    ctx.lineWidth = 8;
+    ctx.strokeRect(posterFrameInset, posterFrameInset, posterWidth - posterFrameInset * 2, posterHeight - posterFrameInset * 2);
 
-    await drawPosterTitle(ctx, posterWidth, posterHeight);
+    await drawPosterTitle(ctx, posterWidth, posterHeight, posterFrameInset);
 
     return canvas;
 }
@@ -1129,15 +1243,17 @@ function downloadPosterFallback(canvas) {
     link.click();
 }
 
-function printPosterCanvas(canvas, printWindow) {
+async function printPosterCanvas(canvas, printWindow) {
     const url = canvas.toDataURL("image/png");
-    const faviconUrl = new URL(PRINT_WINDOW_FAVICON, window.location.href).href;
+    const faviconUrl = await getAssetDataUrl(PRINT_WINDOW_FAVICON);
     const html = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Fakekammer poster</title>
-<link rel="icon" type="image/svg+xml" href="${faviconUrl}">
+<link rel="icon" type="image/png" sizes="32x32" href="${faviconUrl}">
+<link rel="shortcut icon" type="image/png" href="${faviconUrl}">
+<link rel="apple-touch-icon" href="${faviconUrl}">
 <style>
 @page { margin: 0; }
 html, body {
@@ -1171,9 +1287,10 @@ image.addEventListener("load", () => {
 </body>
 </html>`;
 
-    printWindow.document.open();
-    printWindow.document.write(html);
-    printWindow.document.close();
+    const pageUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+
+    printWindow.location.replace(pageUrl);
+    setTimeout(() => URL.revokeObjectURL(pageUrl), 60000);
 }
 
 async function printPoster() {
@@ -1191,7 +1308,7 @@ async function printPoster() {
     return;
     }
 
-    printPosterCanvas(canvas, printWindow);
+    await printPosterCanvas(canvas, printWindow);
 }
 
 document.getElementById("saveBtn").addEventListener("click", e => {
@@ -1225,7 +1342,7 @@ document.getElementById("makeImageBtn").addEventListener("click", e => {
     const item = selectedOptionItem();
 
     if (!item) {
-    alert("선택한 조건에 맞는 이미지가 없습니다.");
+    alert("선택한 조건에 맞는 새 이미지가 없습니다.");
     return;
     }
 
@@ -1239,11 +1356,18 @@ document.getElementById("makeImageBtn").addEventListener("click", e => {
 document.getElementById("randomImageBtn").addEventListener("click", e => {
     e.stopPropagation();
 
+    const item = randomItem();
+
+    if (!item) {
+    alert("더 이상 새로 배치할 이미지가 없습니다.");
+    return;
+    }
+
     const center = screenToWorld(window.innerWidth * 0.62, window.innerHeight * 0.46);
     const offsetX = Math.floor((Math.random() - 0.5) * 260);
     const offsetY = Math.floor((Math.random() - 0.5) * 220);
 
-    createArtifact(randomItem(), center.x + offsetX, center.y + offsetY);
+    createArtifact(item, center.x + offsetX, center.y + offsetY);
 });
 
 buildImageMakerOptions();

@@ -60,7 +60,7 @@
         </fieldset>
 
         <fieldset class="image-option-group">
-          <legend>Trust_device</legend>
+          <legend>Trust device</legend>
           <div class="image-option-list">
             <label class="image-option"><input type="radio" name="trustDevices" value="aging_patina"><span>세월의 흔적</span></label>
             <label class="image-option"><input type="radio" name="trustDevices" value="cartographic_style"><span>지도 및 도식화</span></label>
@@ -77,7 +77,7 @@
         </fieldset>
 
         <fieldset class="image-option-group">
-          <legend>Ambiguity_strategy</legend>
+          <legend>Ambiguity strategy</legend>
           <div class="image-option-list">
             <label class="image-option"><input type="radio" name="ambiguityStrategy" value="author_masking"><span>저자 위장</span></label>
             <label class="image-option"><input type="radio" name="ambiguityStrategy" value="genre_blurring"><span>장르 혼합</span></label>
@@ -96,16 +96,19 @@
     </div>
 
     <div id="pickerDetail" class="archive-picker-detail" aria-hidden="true">
-      <h2 id="pickerTitle"></h2>
+      <div class="picker-title-group">
+        <h2 id="pickerKrTitle" class="picker-title-kr"></h2>
+        <p id="pickerEnTitle" class="picker-title-en"></p>
+      </div>
 
       <dl class="picker-meta">
-        <dt>ID</dt>
-        <dd id="pickerId"></dd>
         <dt>Year</dt>
         <dd id="pickerYear"></dd>
+        <dt>Historical status</dt>
+        <dd id="pickerHistorical"></dd>
         <dt>Reality mode</dt>
         <dd id="pickerMode"></dd>
-        <dt>Status</dt>
+        <dt>Present status</dt>
         <dd id="pickerStatus"></dd>
         <dt>Value type</dt>
         <dd id="pickerValue"></dd>
