@@ -320,6 +320,14 @@ function updateMakeImageState() {
     makeImageBtn.disabled = !isOptionSelectionComplete();
 }
 
+function resetImageMakerOptions() {
+    const form = document.getElementById("imageMakerOptions");
+    if (!form) return;
+
+    form.reset();
+    updateMakeImageState();
+}
+
 function itemMatchesOptions(item, selected) {
     return OPTION_FIELDS.every(field => {
     const selectedValue = normalizeOptionValue(selected[field.key]);
@@ -758,7 +766,7 @@ async function saveCurrentView() {
 
     ctx.save();
 
-    ctx.font = "16px acid-green, sans-serif";
+    ctx.font = "600 16px ABCsolar, sans-serif";
     ctx.fillStyle = "rgba(255,0,255,0.1)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -1034,7 +1042,7 @@ function drawPosterIdBadge(ctx, artifact, x, y) {
     ctx.fill();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "550 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = "600 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(idText, x + radius, y + radius + 0.5);
@@ -1063,7 +1071,7 @@ function drawPosterBackground(ctx, width, height, frameInset) {
     }
     }
 
-    ctx.font = "16px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = "600 16px ABCsolar, Apple SD Gothic Neo, sans-serif";
     ctx.fillStyle = "rgba(255,0,255,.1)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -1180,7 +1188,7 @@ function drawPosterTitleFallback(ctx, width, height, box) {
     const y = box.y + box.height - 46;
 
     ctx.save();
-    ctx.font = "72px acid-green, ABCsolar, sans-serif";
+    ctx.font = "72px acid green ABCsolar, sans-serif";
     ctx.lineJoin = "round";
     ctx.lineWidth = 14;
     ctx.strokeStyle = "#ff00ff";
@@ -1385,6 +1393,12 @@ async function printPoster() {
     await printPosterCanvas(canvas, printWindow);
 }
 
+document.querySelectorAll(".tools button").forEach(button => {
+    button.addEventListener("pointerdown", e => {
+        e.stopPropagation();
+    });
+});
+
 document.getElementById("saveBtn").addEventListener("click", e => {
     e.stopPropagation();
     saveCurrentView();
@@ -1416,15 +1430,19 @@ document.getElementById("makeImageBtn").addEventListener("click", e => {
     const item = selectedOptionItem();
 
     if (!item) {
-    alert("선택한 조건에 맞는 새 이미지가 없습니다.");
-    return;
+        alert("선택한 조건에 맞는 새 이미지가 없습니다.");
+        return;
     }
 
     const center = screenToWorld(window.innerWidth * 0.62, window.innerHeight * 0.46);
     const offsetX = Math.floor((Math.random() - 0.5) * 260);
     const offsetY = Math.floor((Math.random() - 0.5) * 220);
 
-    createArtifact(item, center.x + offsetX, center.y + offsetY);
+    const created = createArtifact(item, center.x + offsetX, center.y + offsetY);
+
+    if (!created) return;
+
+    resetImageMakerOptions();
 });
 
 document.getElementById("randomImageBtn").addEventListener("click", e => {

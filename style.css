@@ -13,6 +13,8 @@ font-display: block
   --bg: #ffffff;
   --ink: #181818;
   --black: #181818;
+  --magenta: #ff00ff;
+  --panel-pink-light: #ff82ff;
   --muted: #ffffff;
   --line: rgba(0,0,0,.0);
   --paper: rgba(255,255,255);
@@ -135,7 +137,7 @@ body.ready {
 
 .landing-subtitle {
   margin: 10px 0 0;
-  color: #ff00ff;
+  color: rgb(255,20,255);
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(16px, 1.55vw, 24px);
   font-weight: 480;
@@ -145,7 +147,7 @@ body.ready {
 
 .landing-intro {
   position: absolute;
-  top: clamp(28px, 1.25vw, 40px);
+  top: clamp(20px, 1vw, 30px);
   right: clamp(26px, 2vw, 28px);
   width: min(45vw, 680px);
   min-height: 96px;
@@ -177,16 +179,22 @@ body.ready {
 .landing-panel-title {
   margin: 0;
   min-width: min(360px, 72%);
-  padding: 8px 28px 7px;
+  padding: 9px 30px 8px;
   border-radius: 999px;
-  background: #fff;
-  color: #ff00ff;
+  border: 2px solid rgb(255, 120, 255);
+  background: linear-gradient(180deg, #ff30ff 0%, #ff30ff 70%, #ff82ff 100%);
+    /* linear-gradient(180deg, var(--panel-pink-light) 0%, var(--magenta) 100%) padding-box,
+    linear-gradient(180deg, #ffbfff 0%, var(--magenta) 100%) border-box; */
+  color: #fff;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(14px, 1.15vw, 20px);
   font-weight: 550;
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .42),
+    inset 0 -4px 10px rgba(190, 0, 190, .24);
 }
 
 .landing-intro p {
@@ -203,18 +211,24 @@ body.ready {
 .landing-guide {
   position: absolute;
   right: clamp(32px, 8vw, 100px);
-  top: clamp(240px, 32vh, 400px);
-  width: min(52vw, 820px);
-  height: clamp(320px, 58vh, 680px);
+  top: clamp(250px, 30vh, 300px);
+  width: min(54vw, 880px);
+  height: clamp(420px, 58vh, 680px);
   min-width: min(560px, calc(100vw - 56px));
   border-radius: 999px;
   background: linear-gradient(180deg, #ff30ff 0%, #ff30ff 70%, #ff82ff 100%);
   z-index: 1;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(26px, 4vw, 52px);
-  padding: clamp(16px, 1.25vw, 26px) clamp(54px, 5vw, 80px);
+  justify-content: flex-start;
+
+  gap: clamp(18px, 2vw, 28px);
+  padding: clamp(20px, 2vw, 34px) clamp(42px, 4vw, 72px) clamp(34px, 3vw, 56px);
+
+  overflow: hidden;
+
   transform: none;
   opacity: 1;
   transition:
@@ -224,17 +238,26 @@ body.ready {
 }
 
 .landing-guide-graphic {
-  width: min(64%, 460px);
-  min-height: clamp(96px, 14vw, 180px);
-  display: grid;
-  place-items: center;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: visible;
 }
 
 .landing-guide-graphic svg,
 .landing-guide-graphic img {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
+  max-width: 96%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .landing-guide.is-hidden {
@@ -388,7 +411,7 @@ button {
   font-family: "ABCsolar", monospace;
   font-weight: 500;
   font-size: 18px;
-  color: #ff00ff;
+  color: rgb(255,20,255);
   text-transform: uppercase;
 }
 
@@ -396,7 +419,7 @@ button {
   position: fixed;
   top: 16px;
   right: 24px;
-  z-index: 1001;
+  z-index: 10000;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -404,8 +427,15 @@ button {
   pointer-events: auto;
 }
 
+.tools,
 .tools * {
   pointer-events: auto;
+}
+
+.tools button {
+  position: relative;
+  z-index: 10001;
+  cursor: var(--cursor-action);
 }
 
 .archive-picker {
@@ -445,20 +475,23 @@ button {
 .image-maker-title {
   width: fit-content;
   max-width: 100%;
-  margin: 6px 18px 20px 0px;
-  padding: 7px 22px 6px;
-  border: 2px solid #fff;
+  margin: 6px 24px 20px 12px;
+  padding: 8px 24px 7px;
+  border: 2px solid rgb(255, 120, 255);
   border-radius: 999px;
-  background: #fff;
-    /* linear-gradient(180deg, #ffffff 0%, #f6f6f6 58%, #e9e9e9 100%); */
-  color: #ff00ff;
+  background: linear-gradient(180deg, #ff00ff 0%, #ff30ff 58%, #ff63ff 100%);
+    /* linear-gradient(180deg, var(--panel-pink-light) 0%, var(--magenta) 100%) padding-box,
+    linear-gradient(180deg, #ffbfff 0%, var(--magenta) 100%) border-box; */
+  color: #fff;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(12px, 1.25vw, 20px);
   font-weight: 550;
   line-height: 1;
   text-align: left;
   text-transform: uppercase;
-  box-shadow: none;
+  /* box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .42),
+    inset 0 -4px 10px rgba(190, 0, 190, .24); */
 }
 
 .image-maker-options {
@@ -562,10 +595,10 @@ button {
   min-width: 0;
   height: var(--control-height);
   padding: var(--control-padding);
-  border: 0;
+  border: 1px solid #fff;
   border-radius: 999px;
-  background: var(--black);
-  color: #fff;
+  background: #fff;
+  color: var(--magenta);
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: var(--control-font-size);
   font-weight: var(--control-font-weight);
@@ -574,16 +607,16 @@ button {
 }
 
 .make-image-btn:disabled {
-  opacity: .36;
+  opacity: .48;
   cursor: default;
   pointer-events: none;
 }
 
 .make-image-btn:hover {
-  background: var(--black);
-  color: #fff;
+  background: #fff;
+  color: var(--magenta);
   transform: translateY(-1px);
-  box-shadow: 0 0 0 2px rgba(255,255,255,.55);
+  /* box-shadow: 0 0 0 2px rgba(255,255,255,.55); */
 }
 
 .archive-picker-detail {
@@ -1122,18 +1155,21 @@ button.delete,
     left: auto;
     top: auto;
     width: 100%;
-    height: 28vh;
+    height: 34vh;
     min-width: 0;
-    min-height: 210px;
+    min-height: 250px;
     margin: 20px 0 86px;
     border-radius: 999px;
     transform: none;
-    padding: 20px 24px;
+    padding: 20px 34px 26px;
+    gap: 14px;
+    overflow: hidden;
   }
 
   .landing-guide-graphic {
-    width: 76%;
-    min-height: 90px;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
   }
 
   .landing-guide.is-hidden {
