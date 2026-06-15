@@ -42,7 +42,7 @@ const OPTION_FIELDS = [
     },
     {
         key: "trustDevices",
-        label: "Trust device",
+        label: "Trust Device",
         fields: ["trustDevices", "trust_devices", "trust_device", "Trust_device"],
         values: [
             "aging_patina",
@@ -62,7 +62,7 @@ const OPTION_FIELDS = [
     },
     {
         key: "ambiguityStrategy",
-        label: "Ambiguity strategy",
+        label: "Ambiguity Strategy",
         fields: ["ambiguityStrategy", "ambiguity_strategy", "Ambiguity_strategy"],
         values: [
             "author_masking",
@@ -868,11 +868,41 @@ function getPosterCategoryText(artifact) {
     : `CATEGORY ${String(artifact.index + 1).padStart(2, "0")}`;
 }
 
+function getCanvasTextWidth(ctx, text, letterSpacing = 0) {
+    const value = String(text);
+    const baseWidth = ctx.measureText(value).width;
+
+    if (!letterSpacing || value.length < 2) return baseWidth;
+
+    return baseWidth + letterSpacing * (value.length - 1);
+}
+
+function fillCanvasTextWithLetterSpacing(ctx, text, x, y, letterSpacing = 0) {
+    const value = String(text);
+
+    if (!letterSpacing || value.length < 2) {
+    ctx.fillText(value, x, y);
+    return;
+    }
+
+    const originalAlign = ctx.textAlign;
+    let cursorX = x - getCanvasTextWidth(ctx, value, letterSpacing) / 2;
+
+    ctx.textAlign = "left";
+
+    for (const char of value) {
+    ctx.fillText(char, cursorX, y);
+    cursorX += ctx.measureText(char).width + letterSpacing;
+    }
+
+    ctx.textAlign = originalAlign;
+}
+
 function getPosterTabHeight(ctx, artifact, frameHeight, tabFontSize = 13) {
     const categoryText = getPosterCategoryText(artifact);
     ctx.save();
-    ctx.font = `${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
-    const categoryWidth = ctx.measureText(categoryText).width;
+    ctx.font = `600 ${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
+    const categoryWidth = getCanvasTextWidth(ctx, categoryText, tabFontSize * 0.06);
     ctx.restore();
 
     return Math.min(frameHeight, Math.max(84, categoryWidth + 34));
@@ -882,7 +912,7 @@ function getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize) {
     const measureCanvas = document.createElement("canvas");
     const measureCtx = measureCanvas.getContext("2d");
 
-    measureCtx.font = `${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
+    measureCtx.font = `600 ${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
 
     const boxes = artifacts.map(artifact => {
     const { rect } = artifact;
@@ -972,22 +1002,23 @@ function drawPosterCategoryLabel(ctx, text, x, y, maxWidth, fontSize) {
     ctx.textBaseline = "middle";
 
     function setFont() {
-    ctx.font = `${size}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
+    ctx.font = `600 ${size}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
     }
 
     setFont();
 
-    while (ctx.measureText(text).width > maxWidth && size > minSize) {
+    while (getCanvasTextWidth(ctx, text, size * 0.06) > maxWidth && size > minSize) {
     size -= 0.5;
     setFont();
     }
 
-    const widest = ctx.measureText(text).width;
+    const letterSpacing = size * 0.06;
+    const widest = getCanvasTextWidth(ctx, text, letterSpacing);
     const scaleX = widest > maxWidth ? maxWidth / widest : 1;
 
     ctx.translate(x, y);
     ctx.scale(scaleX, 1);
-    ctx.fillText(text, 0, 0);
+    fillCanvasTextWithLetterSpacing(ctx, text, 0, 0, letterSpacing);
 
     ctx.restore();
 }
@@ -1003,7 +1034,7 @@ function drawPosterIdBadge(ctx, artifact, x, y) {
     ctx.fill();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "600 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = "550 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(idText, x + radius, y + radius + 0.5);
@@ -1169,7 +1200,12 @@ function drawPosterTitleFallback(ctx, width, height, box) {
 
 async function drawPosterTitle(ctx, width, height, frameInset) {
     const cropRatio = POSTER_TITLE_CROP.height / POSTER_TITLE_CROP.width;
-    const titleWidth = Math.min(605, Math.max(403, width * 0.46));
+    const availableWidth = width - frameInset * 2;
+    const titleWidth = Math.min(
+    860,
+    availableWidth * 0.62,
+    Math.max(520, 520 + Math.max(0, width - 1100) * 0.14)
+    );
     const box = {
     width: titleWidth,
     height: titleWidth * cropRatio
@@ -1209,12 +1245,10 @@ async function makePosterCanvas() {
     const tabWidth = 34;
     const tabFontSize = 10;
     const bounds = getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize);
-    const posterSideMargin = Math.max(94, Math.round(Math.max(bounds.width, bounds.height) * 0.1));
-    const posterTopMargin = Math.max(58, Math.round(Math.max(bounds.width, bounds.height) * 0.055));
-    const posterBottomMargin = Math.max(posterSideMargin, 190);
-    const posterWidth = Math.round(bounds.width + posterSideMargin * 2);
-    const posterHeight = Math.round(bounds.height + posterTopMargin + posterBottomMargin);
-    const posterFrameInset = 18;
+    const posterMargin = Math.max(44, Math.round(Math.max(bounds.width, bounds.height) * 0.035));
+    const posterWidth = Math.round(bounds.width + posterMargin * 2);
+    const posterHeight = Math.round(bounds.height + posterMargin * 2);
+    const posterFrameInset = 14;
     const exportScale = Math.min(2, window.devicePixelRatio || 1);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -1227,8 +1261,8 @@ async function makePosterCanvas() {
 
     const categoryTabGraphic = null;
 
-    const originX = posterSideMargin - bounds.left;
-    const originY = posterTopMargin - bounds.top;
+    const originX = posterMargin - bounds.left;
+    const originY = posterMargin - bounds.top;
     const magenta = "#ff00ff";
 
     for (const artifact of artifacts) {
@@ -1246,11 +1280,12 @@ async function makePosterCanvas() {
     ctx.fillStyle = magenta;
     ctx.fillRect(frameX, frameY, frameWidth, frameHeight);
 
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(imageX, imageY, rect.width, rect.height);
+
     try {
         ctx.drawImage(img, imageX, imageY, rect.width, rect.height);
     } catch (err) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(imageX, imageY, rect.width, rect.height);
     }
 
     drawPosterIdBadge(ctx, artifact, imageX + 8, imageY + 8);
@@ -1450,14 +1485,42 @@ window.addEventListener("wheel", e => {
     console.log("stage click");
 }); */
 
-window.addEventListener("load", () => {
+function showBodyWhenFontsAreReady() {
+    const root = document.documentElement;
+
+    function reveal() {
     document.body.classList.add("ready");
-});
+    }
+
+    if (root.classList.contains("wf-active") || root.classList.contains("wf-inactive")) {
+    reveal();
+    return;
+    }
+
+    const observer = new MutationObserver(() => {
+    if (root.classList.contains("wf-active") || root.classList.contains("wf-inactive")) {
+        observer.disconnect();
+        reveal();
+    }
+    });
+
+    observer.observe(root, {
+    attributes: true,
+    attributeFilter: ["class"]
+    });
+
+    setTimeout(() => {
+    observer.disconnect();
+    reveal();
+    }, 3600);
+}
+
+window.addEventListener("load", showBodyWhenFontsAreReady);
 
 const landing = document.getElementById("landing");
 const landingBrandBlock = document.querySelector(".landing-brand-block");
 const landingIntro = document.querySelector(".landing-intro");
-const mainBrand = document.querySelector(".brand");
+const mainHeader = document.querySelector(".site-header");
 const enterBtn = document.getElementById("enterBtn");
 const guideBtn = document.getElementById("guideBtn");
 const closeGuideBtn = document.getElementById("closeGuideBtn");
@@ -1471,7 +1534,7 @@ enterBtn.addEventListener("click", () => {
   landing.classList.add("hidden");
 });
 
-if (mainBrand) mainBrand.addEventListener("click", () => {
+if (mainHeader) mainHeader.addEventListener("click", () => {
   closePanel();
   landing.classList.remove("hidden");
   landingGuide.classList.add("is-hidden");

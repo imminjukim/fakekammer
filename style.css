@@ -3,7 +3,7 @@ font-family: "ABCsolar";
 src: url("font/ABCSolarDisplayVariable-Trial.woff") format("woff");
 font-weight: 100 900;
 font-style: normal;
-font-display: swap
+font-display: block
 }
 
 .my-text { font-feature-settings: "ss13","ss14","ss15";}
@@ -20,18 +20,20 @@ font-display: swap
   --control-height: 40px;
   --control-padding: 0 22px;
   --control-font-size: 14px;
-  --control-font-weight: 600;
+  --control-font-weight: 550;
   --option-title-font: "ABCsolar", sans-serif;
   --option-title-size: 18px;
-  --option-title-weight: 500;
+  --option-title-weight: 550;
   --option-label-font: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --option-label-size: 14px;
   --option-label-weight: 700;
-  --cursor-default: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 5l16 10-7 2.2 4 6.9-3.8 2.2-4-6.9-5.2 5.2V5z' fill='%23ff00ff' stroke='%23181818' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") 7 5, pointer;
-  --cursor-action: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 5l16 10-7 2.2 4 6.9-3.8 2.2-4-6.9-5.2 5.2V5z' fill='%23ff00ff' stroke='%23181818' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") 7 5, pointer;
-  --cursor-title: url("asset/help_cursor.svg?v=2") 16 16, help;
-  --cursor-artifact: url("asset/image_cursor.svg") 16 16, grab;
-  --cursor-dragging: url("asset/click_cursor.svg") 16 16, grabbing;
+  --abc-letter-spacing: .06em;
+  --kr-letter-spacing: .04em;
+  --cursor-default: url("asset/default_cursor.svg?v=20260615c") 7 5, pointer;
+  --cursor-action: url("asset/action_cursor.svg?v=20260615c") 7 5, pointer;
+  --cursor-title: url("asset/help_cursor.svg?v=20260615c") 16 16, pointer;
+  --cursor-artifact: url("asset/image_cursor.svg?v=20260615c") 16 16, grab;
+  --cursor-dragging: url("asset/click_cursor.svg?v=20260615c") 16 16, grabbing;
 }
 
 * {
@@ -55,7 +57,7 @@ body {
     linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
   color: var(--ink);
   font-family: "ABCsolar", "dongle", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 600;
+  font-weight: 550;
   cursor: var(--cursor-default);
   user-select: none;
   overscroll-behavior: none;
@@ -181,7 +183,7 @@ body.ready {
   color: #ff00ff;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(14px, 1.15vw, 20px);
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
@@ -257,7 +259,7 @@ body.ready {
   place-items: center;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: 36px;
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1;
   transform: translateX(-50%);
   box-shadow: none;
@@ -320,9 +322,10 @@ button {
   width: fit-content;
   top: 0px;
   left: 20px;
-  z-index: 1000;
+  z-index: 3200;
   mix-blend-mode: normal;
   pointer-events: auto;
+  cursor: var(--cursor-action);
 }
 
 .brand {
@@ -361,6 +364,10 @@ button {
 
   cursor: var(--cursor-action);
   
+}
+
+.site-header * {
+  cursor: var(--cursor-action);
 }
 
 .brand * {
@@ -447,7 +454,7 @@ button {
   color: #ff00ff;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: clamp(12px, 1.25vw, 20px);
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1;
   text-align: left;
   text-transform: uppercase;
@@ -484,6 +491,7 @@ button {
   font-size: var(--option-title-size);
   font-weight: var(--option-title-weight);
   line-height: 1;
+  text-transform: capitalize;
 }
 
 .image-option-list {
@@ -529,6 +537,7 @@ button {
   padding: 6px 10px 5px;
   border: 1.5px solid #fff;
   border-radius: 999px;
+  background: #ff00ff;
   color: #fff;
   white-space: nowrap;
   transition:
@@ -589,7 +598,7 @@ button {
   overflow: hidden;
   color: var(--black);
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 600;
+  font-weight: 550;
   transition: opacity .16s ease, visibility .16s ease;
 }
 
@@ -632,13 +641,13 @@ button {
   margin-top: 0px;
   font-family: "ABCsolar", sans-serif;
   font-size: clamp(27px, 2.2vw, 40px);
-  font-weight: 500;
+  font-weight: 550;
 }
 
 .archive-picker-detail h2 {
   margin: 0;
   font-size: clamp(22px, 2vw, 32px);
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1.16;
   letter-spacing: 0;
 }
@@ -663,7 +672,7 @@ button {
   margin: 0;
   font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   font-size: clamp(13px, .9vw, 15px);
-  font-weight: 800;
+  font-weight: 750;
 }
 
 .picker-description {
@@ -672,11 +681,20 @@ button {
   padding: 0;
   border: 0;
   font-size: clamp(12px, .9vw, 14px);
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1.58;
   text-align: left;
   word-break: keep-all;
   overflow: hidden;
+}
+
+.landing-intro,
+.picker-title-kr,
+.picker-meta dd,
+.picker-description,
+.image-option,
+.intro {
+  letter-spacing: var(--kr-letter-spacing);
 }
 
 .stage {
@@ -823,7 +841,7 @@ button:hover {
   color: var(--black);
 
   font-family: "ABCsolar";
-  font-weight: 600;
+  font-weight: 550;
   font-size: 16px;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -874,6 +892,7 @@ button:hover {
 .artifact figure {
   margin: 0;
   position: relative;
+  background: #ffffff;
 }
 
 .artifact img {
@@ -907,7 +926,7 @@ button:hover {
   color: #ffffff;
   font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 550;
   line-height: 1;
   opacity: 0;
   transform: scale(.86);
@@ -985,7 +1004,7 @@ button.delete,
 
 .panel-text {
   font-family: "ABCsolar", sans-serif;
-  font-weight: 600;
+  font-weight: 550;
   color: #fff;
   padding: 16px 18px 16px;
   overflow: hidden;
@@ -997,7 +1016,7 @@ button.delete,
 
 .panel-text h1 {
   font-family: "ABCsolar", sans-serif;
-  font-weight: 600;
+  font-weight: 550;
   margin: 0 0 10px;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.12;
@@ -1047,7 +1066,7 @@ button.delete,
     --control-height: 36px;
     --control-padding: 0 14px;
     --control-font-size: 11px;
-    --control-font-weight: 600;
+    --control-font-weight: 550;
   }
 
   .landing-ui {
@@ -1209,4 +1228,19 @@ button.delete,
   .intro {
     width: min(320px, calc(100vw - 36px));
   }
+}
+
+.landing-panel-title,
+.image-maker-title,
+.image-option-group legend,
+.make-image-btn,
+.picker-title-en,
+.picker-meta dt,
+.hint,
+.artifact-id-badge,
+.panel-text,
+.panel-text h1,
+button {
+  font-weight: 550;
+  letter-spacing: var(--abc-letter-spacing);
 }
