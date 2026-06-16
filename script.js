@@ -1318,15 +1318,94 @@ async function makePosterCanvas() {
 }
 
 function downloadPosterFallback(canvas) {
-    const link = document.createElement("a");
+    downloadPosterPdf(canvas);
+}
 
-    link.download = "fakekammer-poster.png";
-    link.href = canvas.toDataURL("image/png");
+function dataUrlToBytes(dataUrl) {
+    const base64 = dataUrl.split(",")[1];
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+    }
+
+    return bytes;
+}
+
+function makePosterPdfBlob(canvas) {
+    const encoder = new TextEncoder();
+    const imageBytes = dataUrlToBytes(canvas.toDataURL("image/jpeg", 0.96));
+    const pageWidth = Math.max(1, Math.round(canvas.width / 2));
+    const pageHeight = Math.max(1, Math.round(canvas.height / 2));
+    const content = `q\n${pageWidth} 0 0 ${pageHeight} 0 0 cm\n/Im0 Do\nQ`;
+    const contentBytes = encoder.encode(content);
+    const parts = [];
+    const offsets = [0];
+    let position = 0;
+
+    const pushAscii = value => {
+    const bytes = encoder.encode(value);
+    parts.push(bytes);
+    position += bytes.length;
+    };
+
+    const pushBytes = bytes => {
+    parts.push(bytes);
+    position += bytes.length;
+    };
+
+    const addObject = (index, objectParts) => {
+    offsets[index] = position;
+    pushAscii(`${index} 0 obj\n`);
+    objectParts.forEach(part => {
+        if (typeof part === "string") pushAscii(part);
+        else pushBytes(part);
+    });
+    pushAscii("\nendobj\n");
+    };
+
+    pushAscii("%PDF-1.4\n");
+    addObject(1, ["<< /Type /Catalog /Pages 2 0 R >>"]);
+    addObject(2, ["<< /Type /Pages /Kids [3 0 R] /Count 1 >>"]);
+    addObject(3, [`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`]);
+    addObject(4, [
+    `<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imageBytes.length} >>\nstream\n`,
+    imageBytes,
+    "\nendstream"
+    ]);
+    addObject(5, [`<< /Length ${contentBytes.length} >>\nstream\n`, contentBytes, "\nendstream"]);
+
+    const xrefStart = position;
+    pushAscii("xref\n0 6\n0000000000 65535 f \n");
+
+    for (let i = 1; i <= 5; i++) {
+    pushAscii(`${String(offsets[i]).padStart(10, "0")} 00000 n \n`);
+    }
+
+    pushAscii(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`);
+
+    return new Blob(parts, { type: "application/pdf" });
+}
+
+function downloadPosterPdf(canvas, targetWindow = window) {
+    const pdfBlob = makePosterPdfBlob(canvas);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    const link = targetWindow.document.createElement("a");
+
+    link.download = "fakekammer-poster.pdf";
+    link.href = pdfUrl;
+    targetWindow.document.body.appendChild(link);
     link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
 }
 
 async function printPosterCanvas(canvas, printWindow) {
-    const url = canvas.toDataURL("image/png");
+    const previewUrl = canvas.toDataURL("image/png");
+    const pdfBlob = makePosterPdfBlob(canvas);
+    const pdfUrl = URL.createObjectURL(pdfBlob);
     const faviconUrl = await getAssetDataUrl(PRINT_WINDOW_FAVICON);
     const html = `<!doctype html>
 <html>
@@ -1337,7 +1416,6 @@ async function printPosterCanvas(canvas, printWindow) {
 <link rel="shortcut icon" type="image/png" href="${faviconUrl}">
 <link rel="apple-touch-icon" href="${faviconUrl}">
 <style>
-@page { margin: 0; }
 html, body {
   margin: 0;
   width: 100%;
@@ -1347,6 +1425,13 @@ html, body {
 body {
   display: grid;
   place-items: center;
+  font-family: ABCsolar, Apple SD Gothic Neo, sans-serif;
+}
+a {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  color: #ff00ff;
 }
 img {
   display: block;
@@ -1358,12 +1443,14 @@ img {
 </style>
 </head>
 <body>
-<img src="${url}" alt="Fakekammer poster">
+<img src="${previewUrl}" alt="Fakekammer poster">
+<!-- <a id="downloadPoster" href="${pdfUrl}" download="fakekammer-poster.pdf">download poster pdf</a> -->
+<a id="downloadPoster" href="${pdfUrl}" download="fakekammer-poster.pdf" hidden aria-hidden="true"></a>
 <script>
-const image = document.querySelector("img");
-image.addEventListener("load", () => {
+const link = document.getElementById("downloadPoster");
+window.addEventListener("load", () => {
   window.focus();
-  window.print();
+  link.click();
 });
 <\/script>
 </body>
@@ -1372,7 +1459,10 @@ image.addEventListener("load", () => {
     const pageUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
 
     printWindow.location.replace(pageUrl);
-    setTimeout(() => URL.revokeObjectURL(pageUrl), 60000);
+    setTimeout(() => {
+    URL.revokeObjectURL(pageUrl);
+    URL.revokeObjectURL(pdfUrl);
+    }, 60000);
 }
 
 async function printPoster() {
