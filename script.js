@@ -1544,18 +1544,28 @@ const guideBtn = document.getElementById("guideBtn");
 const closeGuideBtn = document.getElementById("closeGuideBtn");
 const landingGuide = document.getElementById("landingGuide");
 
-landingBrandBlock.addEventListener("click", () => {
-  landingIntro.classList.toggle("is-open");
-});
+function syncLandingState() {
+    document.body.classList.toggle("landing-active", !landing.classList.contains("hidden"));
+}
+
+syncLandingState();
+
+if (landingBrandBlock) {
+  landingBrandBlock.addEventListener("click", () => {
+    landingIntro.classList.toggle("is-open");
+  });
+}
 
 enterBtn.addEventListener("click", () => {
   landing.classList.add("hidden");
+  syncLandingState();
 });
 
 if (mainHeader) mainHeader.addEventListener("click", () => {
   closePanel();
   landing.classList.remove("hidden");
   landingGuide.classList.add("is-hidden");
+  syncLandingState();
 });
 
 guideBtn.addEventListener("click", () => {

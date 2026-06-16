@@ -104,7 +104,7 @@ body.ready {
   position: absolute;
   top: clamp(12px, 1.25vw, 40px);
   left: clamp(18px, 2vw, 28px);
-  max-width: min(48vw, 720px);
+  max-width: min(50vw, 760px);
   z-index: 3;
   cursor: var(--cursor-title);
 }
@@ -148,20 +148,21 @@ body.ready {
 .landing-intro {
   position: absolute;
   top: clamp(20px, 1vw, 30px);
-  right: clamp(26px, 2vw, 28px);
-  width: min(45vw, 680px);
-  min-height: 96px;
+  right: clamp(26px, 3vw, 52px);
+  width: min(50vw, 820px);
+  min-height: 118px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: clamp(12px, 1.1vw, 18px);
-  padding: clamp(18px, 1vw, 24px) clamp(42px, 4.2vw, 64px);
+  padding: clamp(20px, 1.25vw, 28px) clamp(48px, 4.6vw, 78px);
   border-radius: 999px;
-  background: #ff30ff;
+  background: linear-gradient(180deg, #ff30ff 0%, #ff30ff 70%, #ff82ff 100%);
+  border: 4px solid #ff30ff;
   color: #fff;
   font-family: "Apple SD Gothic Neo", "ABCsolar", sans-serif;
-  font-size: clamp(11px, .9vw, 14px);
+   font-size: clamp(12px, .98vw, 16px);
   font-weight: 650;
   line-height: 1.55;
   word-break: keep-all;
@@ -210,10 +211,11 @@ body.ready {
 
 .landing-guide {
   position: absolute;
-  right: clamp(32px, 8vw, 100px);
-  top: clamp(250px, 30vh, 300px);
-  width: min(54vw, 880px);
-  height: clamp(420px, 58vh, 680px);
+  right: clamp(26px, 4vw, 64px);
+  top: auto;
+  bottom: clamp(24px, 2vh, 36px);
+  width: min(64vw, 1120px);
+  height: clamp(455px, 62vh, 740px);
   min-width: min(560px, calc(100vw - 56px));
   border-radius: 999px;
   background: linear-gradient(180deg, #ff30ff 0%, #ff30ff 70%, #ff82ff 100%);
@@ -225,8 +227,8 @@ body.ready {
   align-items: center;
   justify-content: flex-start;
 
-  gap: clamp(12px, 1.35vw, 20px);
-  padding: clamp(16px, 1.55vw, 26px) clamp(26px, 2.75vw, 48px) clamp(22px, 2.2vw, 38px);
+  gap: clamp(2px, 1vw, 20px);
+  padding: clamp(6px, 1vw, 20px) clamp(10px, 1vw, 20px) clamp(8px, .8vw, 14px);
 
   overflow: hidden;
 
@@ -245,7 +247,7 @@ body.ready {
   min-height: 0;
 
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 
   overflow: visible;
@@ -256,8 +258,8 @@ body.ready {
   display: block;
   width: auto;
   height: auto;
-  max-width: 99%;
-  max-height: 100%;
+  max-width: 95%;
+  max-height: 93%;
   object-fit: contain;
 }
 
@@ -297,28 +299,32 @@ body.ready {
 
 .landing-controls {
   position: absolute;
-  right: clamp(26px, 2.45vw, 40px);
-  bottom: clamp(28px, 2vw, 20px);
+  left: clamp(22px, 2vw, 34px);
+  top: clamp(158px, 11vw, 210px);
+  margin-top: 0;
   display: flex;
   gap: 12px;
   z-index: 3;
 }
 
 .enter-btn {
-  border: 1px solid var(--black);
+  border: 0;
   background: var(--black);
   color: #fff;
   border-radius: 999px;
-  min-width: 120px;
-  height: var(--control-height);
-  padding: var(--control-padding);
+  min-width: 148px;
+  height: auto;
+  min-height: 46px;
+  padding: 10px 30px 12px;
   font-size: var(--control-font-size);
   font-weight: var(--control-font-weight);
   line-height: 1;
   cursor: var(--cursor-action);
+  box-shadow: none;
   transition:
     background .18s ease,
     color .18s ease,
+    box-shadow .18s ease,
     transform .18s ease;
 }
 
@@ -326,10 +332,20 @@ body.ready {
   cursor: var(--cursor-action);
 }
 
+.enter-btn:focus,
+.enter-btn:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 .enter-btn:hover {
   background: #ff00ff;
-  color: #fff;
+  color: var(--black);
   transform: translateY(-1px);
+  box-shadow:
+    0 0 18px rgba(255, 0, 255, .45),
+    0 0 36px rgba(255, 0, 255, .30),
+    /* 0 0 58px rgba(255, 0, 255, .18); */
 }
 
 .intro,
@@ -416,16 +432,24 @@ button {
   text-transform: uppercase;
 }
 
+.landing-active .tools {
+  opacity: 0;
+ visibility: hidden;
+  pointer-events: none;
+}
+
 .tools {
   position: fixed;
   top: 16px;
   right: 24px;
-  z-index: 10000;
+  z-index: 2147483647;
   display: flex;
   gap: 8px;
   align-items: center;
   cursor: default;
   pointer-events: auto;
+  isolation: isolate;
+  transform: translateZ(0);
 }
 
 .tools,
@@ -435,8 +459,10 @@ button {
 
 .tools button {
   position: relative;
-  z-index: 10001;
+  z-index: 2147483647;
   cursor: var(--cursor-action);
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .archive-picker {
@@ -732,7 +758,7 @@ button {
 }
 
 .stage {
-  pointer-events: auto;
+  pointer-events: none;
   width: 10000px;
   height: 7000px;
   transition: background-color .35s ease;
@@ -894,6 +920,7 @@ button:hover {
   z-index: var(--z, 10);
   cursor: var(--cursor-artifact);
   animation: materialize .28s ease both;
+  pointer-events: auto;
   touch-action: none;
 }
 
@@ -1185,9 +1212,12 @@ button.delete,
   }
 
   .landing-controls {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
+    position: relative;
+    left: auto;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    margin-top: 18px;
     gap: 8px;
   }
 
