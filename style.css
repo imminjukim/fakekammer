@@ -83,13 +83,24 @@ body.ready {
   z-index: 999999;
   background: #fff;
   overflow: hidden;
-  transition: none;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity .12s linear,
+    transform .22s cubic-bezier(.2, .8, .2, 1),
+    visibility 0s linear 0s;
 }
 
 .landing.hidden {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  transform: translateY(-10px);
+  transition:
+    opacity .12s linear,
+    transform .22s cubic-bezier(.2, .8, .2, 1),
+    visibility 0s linear .18s;
 }
 
 .landing-ui {
@@ -172,9 +183,9 @@ body.ready {
   pointer-events: none;
   transform: translateY(-8px);
   transition:
-    opacity .18s ease,
-    visibility .18s ease,
-    transform .18s ease;
+    opacity .16s ease,
+    transform .18s cubic-bezier(.2, .8, .2, 1),
+    visibility 0s linear .16s;
 }
 
 .landing-panel-title {
@@ -207,6 +218,7 @@ body.ready {
   visibility: visible;
   pointer-events: auto;
   transform: translateY(0);
+  transition-delay: 0s;
 }
 
 .landing-guide {
@@ -232,12 +244,13 @@ body.ready {
 
   overflow: hidden;
 
-  transform: none;
+  transform: translateY(0);
   opacity: 1;
+  visibility: visible;
   transition:
-    opacity .22s ease,
-    transform .22s ease,
-    visibility .22s ease;
+    opacity .16s ease,
+    transform .18s cubic-bezier(.2, .8, .2, 1),
+    visibility 0s linear 0s;
 }
 
 .landing-guide-graphic {
@@ -267,7 +280,11 @@ body.ready {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(.96);
+  transform: translateY(-8px);
+  transition:
+    opacity .16s ease,
+    transform .18s cubic-bezier(.2, .8, .2, 1),
+    visibility 0s linear .16s;
 }
 
 .guide-close {
@@ -1188,7 +1205,7 @@ button.delete,
     min-height: 250px;
     margin: 20px 0 86px;
     border-radius: 999px;
-    transform: none;
+    transform: translateY(0);
     padding: 20px 34px 26px;
     gap: 14px;
     overflow: hidden;
@@ -1201,7 +1218,7 @@ button.delete,
   }
 
   .landing-guide.is-hidden {
-    transform: scale(.96);
+    transform: translateY(-8px);
   }
 
   .guide-close {
