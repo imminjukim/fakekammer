@@ -1500,7 +1500,7 @@ button {
   top: auto;
   right: auto;
   left: 3vw;
-  bottom: clamp(30px, 4.2vh, 64px);
+  bottom: clamp(50px, 6.5vh, 78px);
   width: 35.5vw;
   height: min(71.2vh, 578px);
   min-height: 0;
@@ -1529,7 +1529,7 @@ button {
 
 .landing-guide {
   right: 3vw;
-  bottom: clamp(30px, 4.2vh, 64px);
+  bottom: clamp(50px, 6.5vh, 78px);
   width: 56.5vw;
   height: min(71.2vh, 578px);
   min-width: 0;
@@ -1560,6 +1560,63 @@ button {
 .landing-panel-title {
   background: linear-gradient(180deg, #ff00ff 0%, #ff18ff 58%, #ff8cff 100%);
   border-color: #ffadff;
+}
+
+.landing-marquee {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 8;
+  height: clamp(30px, 4.2vh, 42px);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--magenta);
+  color: #fff;
+  pointer-events: none;
+  filter: var(--title-magenta-filter);
+}
+
+.landing-marquee-track {
+  display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  will-change: transform;
+  animation: landing-marquee-scroll 24s linear infinite;
+}
+
+.landing-marquee-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1.1em;
+  padding-right: 1.1em;
+  white-space: nowrap;
+}
+
+.landing-marquee span {
+  font-family: "Wanted Sans", sans-serif;
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.035em;
+}
+
+@keyframes landing-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-marquee-track {
+    animation-play-state: paused;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1634,5 +1691,14 @@ button {
 
   .landing-guide .landing-panel-title {
     min-width: min(250px, 82%);
+  }
+
+  .landing-marquee {
+    position: fixed;
+    height: 32px;
+  }
+
+  .landing-marquee span {
+    font-size: 13px;
   }
 }
