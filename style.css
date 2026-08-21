@@ -477,7 +477,8 @@ button {
   font-family: "Wanted Sans", sans-serif;
   font-weight: var(--body-font-weight);
   font-size: 18px;
-  color: rgb(255,20,255);
+  color: var(--magenta);
+  filter: var(--title-magenta-filter);
   text-transform: uppercase;
 }
 
@@ -837,17 +838,29 @@ button {
   pointer-events: none;
   width: 10000px;
   height: 7000px;
-  transition: background-color .35s ease;
 }
 
 /* body:has(.site-header:hover) .stage {
   background-color: #ff00ff;
 } */
 
-body:has(.artifact:hover) .stage {
-  background-color: #ff00ff;
+.stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background-color: var(--magenta);
   background-image:
     radial-gradient(circle, #ffffff 1px, transparent 1.15px);
+  background-size: 36px 36px;
+  filter: var(--title-magenta-filter);
+  transition: opacity .35s ease;
+}
+
+body:has(.artifact:hover) .stage::before {
+  opacity: 1;
 }
 
 body.detail-open .archive-picker {
