@@ -1744,6 +1744,7 @@ landingChoiceButtons.forEach((button, index) => {
     const isCorrect = index === correctLandingChoice;
     landingChoiceFeedback.textContent = isCorrect ? "Good!" : "Oops!";
     landingChoiceFeedback.classList.add("is-visible");
+    landing.classList.add("feedback-visible");
 
     if (isCorrect) {
       landingChoiceLocked = true;
@@ -1753,6 +1754,7 @@ landingChoiceButtons.forEach((button, index) => {
         syncLandingState();
         window.setTimeout(() => {
           landingChoiceFeedback.classList.remove("is-visible");
+          landing.classList.remove("feedback-visible");
           landing.classList.remove("is-entering");
         }, 50);
       }, 650);
@@ -1761,6 +1763,7 @@ landingChoiceButtons.forEach((button, index) => {
 
     landingFeedbackTimer = window.setTimeout(() => {
       landingChoiceFeedback.classList.remove("is-visible");
+      landing.classList.remove("feedback-visible");
     }, 900);
   });
 });
@@ -1772,6 +1775,7 @@ if (mainHeader) mainHeader.addEventListener("click", () => {
   correctLandingChoice = Math.floor(Math.random() * landingChoiceButtons.length);
   landingChoiceLocked = false;
   landingChoiceFeedback.classList.remove("is-visible");
+  landing.classList.remove("feedback-visible");
   syncLandingState();
 });
 

@@ -1579,6 +1579,11 @@ button {
   filter: var(--title-magenta-filter);
 }
 
+.landing.feedback-visible .landing-marquee {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .landing-marquee-track {
   display: flex;
   flex: 0 0 auto;
