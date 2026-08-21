@@ -11,7 +11,7 @@ const STAGE_WIDTH = 10000;
 const STAGE_HEIGHT = 7000;
 const POSTER_TITLE_GRAPHIC = "asset/poster_title.svg";
 const POSTER_CATEGORY_TAB_GRAPHIC = "asset/poster_category.svg";
-const POSTER_PAGE_URL = "poster.html?v=20260821-0460";
+const POSTER_PAGE_URL = "poster.html?v=20260821-0480";
 const BODY_LETTER_SPACING_EM = -0.015;
 const GRID_MAGENTA = "rgba(255,0,255,.5)";
 const POSTER_CATEGORY_TAB_CROP = {
@@ -27,8 +27,8 @@ if (landingWatermark) {
 const POSTER_TITLE_CROP = {
     x: 0,
     y: 0,
-    width: 700,
-    height: 200
+    width: 638.91,
+    height: 172.78
 };
 const OPTION_FIELDS = [
     {
@@ -795,18 +795,52 @@ function escapeHtml(str) {
 
 function canvasToBlob(canvas, type = "image/png", quality) {
     return new Promise((resolve, reject) => {
-    canvas.toBlob(result => {
+    const fallback = () => {
+        try {
+        const dataUrl = canvas.toDataURL(type, quality);
+        const parts = dataUrl.split(",");
+        const binary = atob(parts[1]);
+        const bytes = new Uint8Array(binary.length);
+
+        for (let index = 0; index < binary.length; index++) {
+            bytes[index] = binary.charCodeAt(index);
+        }
+
+        resolve(new Blob([bytes], { type }));
+        } catch (error) {
+        reject(error);
+        }
+    };
+
+    if (typeof canvas.toBlob !== "function") {
+        fallback();
+        return;
+    }
+
+    try {
+        canvas.toBlob(result => {
         if (result) resolve(result);
-        else reject(new Error("Canvas conversion failed"));
-    }, type, quality);
+        else fallback();
+        }, type, quality);
+    } catch (error) {
+        fallback();
+    }
     });
+}
+
+function getSafeCanvasScale(width, height) {
+    const requestedScale = Math.min(2, window.devicePixelRatio || 1);
+    const maxDimensionScale = 4096 / Math.max(width, height);
+    const maxAreaScale = Math.sqrt(12000000 / Math.max(1, width * height));
+
+    return Math.max(0.01, Math.min(requestedScale, maxDimensionScale, maxAreaScale));
 }
 
 async function saveCurrentView() {
     closePanel();
 
-    const exportScale = Math.min(2, window.devicePixelRatio || 1);
     const capture = getCaptureBounds();
+    const exportScale = getSafeCanvasScale(capture.width, capture.height);
 
     const canvas = document.createElement("canvas");
 
@@ -1293,18 +1327,18 @@ function drawPosterTitleFallback(ctx, width, height, box) {
 async function drawPosterTitle(ctx, width, height, frameInset) {
     const cropRatio = POSTER_TITLE_CROP.height / POSTER_TITLE_CROP.width;
     const availableWidth = width - frameInset * 2;
-    const titleWidth = Math.min(
+    const titleWidth = Math.round(Math.min(
     860,
     availableWidth * 0.62,
     Math.max(520, 520 + Math.max(0, width - 1100) * 0.14)
-    );
+    ));
+    const titleHeight = Math.round(titleWidth * cropRatio);
     const box = {
     width: titleWidth,
-    height: titleWidth * cropRatio
+    height: titleHeight,
+    x: Math.round(width - titleWidth),
+    y: Math.round(height - titleHeight)
     };
-
-    box.x = width - box.width;
-    box.y = height - box.height;
 
     const svg = await loadPosterTitleGraphic();
 
@@ -1313,13 +1347,21 @@ async function drawPosterTitle(ctx, width, height, frameInset) {
     return;
     }
 
+    ctx.save();
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     ctx.drawImage(
     svg,
+    0,
+    0,
+    svg.naturalWidth,
+    svg.naturalHeight,
     box.x,
     box.y,
     box.width,
     box.height
     );
+    ctx.restore();
 }
 
 async function makePosterCanvas() {
@@ -1344,7 +1386,7 @@ async function makePosterCanvas() {
     const posterWidth = Math.round(bounds.width + posterMargin * 2);
     const posterHeight = Math.round(bounds.height + posterMargin * 2);
     const posterFrameInset = 14;
-    const exportScale = Math.min(2, window.devicePixelRatio || 1);
+    const exportScale = getSafeCanvasScale(posterWidth, posterHeight);
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 

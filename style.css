@@ -871,15 +871,17 @@ body:has(.artifact:hover) .brand:hover {
 }
 
 button {
+  -webkit-appearance: none;
+  appearance: none;
   background: var(--black);
   color: #fff;
   min-height: var(--control-height);
   padding: var(--control-padding);
+  border: 2px solid var(--black);
   border-radius: 999px;
-  backdrop-filter: blur(12px);
-  box-shadow:
-    0 0 18px rgba(255, 255, 255, 0),
-    0 0 40px rgba(255,255,255,.03);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
 
   font-family: "Wanted Sans", sans-serif;
   font-weight: var(--control-font-weight);
