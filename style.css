@@ -1497,10 +1497,10 @@ button {
 }
 
 .landing-intro {
-  top: auto;
+  top: calc(6px + min(4.68vw, 70.2px) + 50vh - clamp(15px, 2.1vh, 21px) - min(35.6vh, 289px));
   right: auto;
   left: 3vw;
-  bottom: clamp(50px, 6.5vh, 78px);
+  bottom: auto;
   width: 35.5vw;
   height: min(71.2vh, 578px);
   min-height: 0;
@@ -1529,7 +1529,8 @@ button {
 
 .landing-guide {
   right: 3vw;
-  bottom: clamp(50px, 6.5vh, 78px);
+  top: calc(6px + min(4.68vw, 70.2px) + 50vh - clamp(15px, 2.1vh, 21px) - min(35.6vh, 289px));
+  bottom: auto;
   width: 56.5vw;
   height: min(71.2vh, 578px);
   min-width: 0;
