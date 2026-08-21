@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fakekammer poster</title>
+  <link rel="preload" href="font/WantedSansVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="asset/poster_favicon.ico?v=20260821-0450" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="asset/poster_favicon.svg?v=20260821-0450">
+  <link rel="icon" type="image/png" sizes="48x48" href="asset/poster_favicon.png?v=20260821-0450">
+  <link rel="shortcut icon" href="asset/poster_favicon.ico?v=20260821-0450">
+  <link rel="apple-touch-icon" href="asset/poster_favicon.png?v=20260821-0450">
+  <style>
+    @font-face {
+      font-family: "Wanted Sans";
+      src: url("font/WantedSansVariable.woff2") format("woff2-variations");
+      font-weight: 400 1000;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #ffffff;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: #ff00ff;
+      font-family: "Wanted Sans", sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+    }
+
+    #posterPreview {
+      display: none;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: calc(100vh - 48px);
+    }
+
+    body.ready #posterPreview {
+      display: block;
+    }
+
+    body.ready #posterStatus {
+      display: none;
+    }
+
+    @media print {
+      body {
+        display: block;
+        padding: 0;
+      }
+
+      #posterPreview {
+        width: 100%;
+        max-width: none;
+        max-height: none;
+      }
+
+      #posterStatus {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <p id="posterStatus">making poster…</p>
+  <img id="posterPreview" alt="Fakekammer poster preview">
+
+  <script>
+    const posterImage = document.getElementById("posterPreview");
+    const posterStatus = document.getElementById("posterStatus");
+
+    const params = new URLSearchParams(window.location.search);
+    const imageUrl = params.get("image");
+    const errorMessage = params.get("error");
+    const isPreviewOnly = params.get("preview") === "1";
+
+    if (errorMessage) {
+      posterStatus.textContent = errorMessage;
+    } else if (imageUrl) {
+      posterImage.onload = () => {
+        document.body.classList.add("ready");
+
+        if (!isPreviewOnly) {
+          window.focus();
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => window.print());
+          });
+        }
+      };
+
+      posterImage.onerror = () => {
+        posterStatus.textContent = "포스터 이미지를 불러오지 못했습니다. 다시 시도해 주세요.";
+      };
+
+      posterImage.src = imageUrl;
+    }
+  </script>
+</body>
+</html>

@@ -6,17 +6,24 @@ const hint = document.getElementById("hint");
 const panel = document.getElementById("panel");
 const closeBtn = document.getElementById("closeBtn");
 const archivePicker = document.getElementById("archivePicker");
+const landingWatermark = document.querySelector(".landing-watermark");
 const STAGE_WIDTH = 10000;
 const STAGE_HEIGHT = 7000;
 const POSTER_TITLE_GRAPHIC = "asset/poster_title.svg";
 const POSTER_CATEGORY_TAB_GRAPHIC = "asset/poster_category.svg";
-const PRINT_WINDOW_FAVICON = "asset/poster_favicon.png";
+const POSTER_PAGE_URL = "poster.html?v=20260821-0460";
+const BODY_LETTER_SPACING_EM = -0.015;
+const GRID_MAGENTA = "rgba(255,0,255,.5)";
 const POSTER_CATEGORY_TAB_CROP = {
     x: 26.9,
     y: 21.3,
     width: 32.1,
     height: 126.4
 };
+
+if (landingWatermark) {
+    landingWatermark.textContent = Array(640).fill("Fakekammer").join(" ");
+}
 const POSTER_TITLE_CROP = {
     x: 0,
     y: 0,
@@ -300,9 +307,9 @@ function getItemFieldValues(item, field) {
 
 function getSelectedOptions() {
     return OPTION_FIELDS.reduce((selected, field) => {
-    const checked = document.querySelector(`input[name="${field.key}"]:checked`);
+    const checked = document.querySelector(`.image-option.is-selected[data-option-name="${field.key}"]`);
 
-    if (checked) selected[field.key] = checked.value;
+    if (checked) selected[field.key] = checked.dataset.optionValue;
 
     return selected;
     }, {});
@@ -317,6 +324,8 @@ function isOptionSelectionComplete() {
 function updateMakeImageState() {
     const makeImageBtn = document.getElementById("makeImageBtn");
 
+    if (!makeImageBtn) return;
+
     makeImageBtn.disabled = !isOptionSelectionComplete();
 }
 
@@ -325,6 +334,10 @@ function resetImageMakerOptions() {
     if (!form) return;
 
     form.reset();
+    form.querySelectorAll(".image-option.is-selected").forEach(option => {
+    option.classList.remove("is-selected");
+    option.setAttribute("aria-pressed", "false");
+    });
     updateMakeImageState();
 }
 
@@ -384,8 +397,57 @@ function buildImageMakerOptions() {
 
     if (!form) return;
 
+    const convertOptionsToButtons = () => {
+    form.querySelectorAll("label.image-option").forEach(label => {
+        const input = label.querySelector('input[type="radio"]');
+        const span = label.querySelector("span");
+        if (!input || !span) return;
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "image-option";
+        button.setAttribute("aria-pressed", "false");
+        button.dataset.optionName = input.name;
+        button.dataset.optionValue = input.value;
+        button.append(span);
+        label.replaceWith(button);
+    });
+    };
+
+    const bindOptionSelection = () => {
+    if (form.dataset.selectionBound === "true") return;
+
+    form.dataset.selectionBound = "true";
+    form.addEventListener("click", event => {
+        const option = event.target.closest(".image-option[data-option-name]");
+        if (!option || !form.contains(option)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        form.querySelectorAll(`.image-option[data-option-name="${option.dataset.optionName}"]`).forEach(groupOption => {
+        groupOption.classList.remove("is-selected");
+        groupOption.setAttribute("aria-pressed", "false");
+        });
+
+        option.classList.add("is-selected");
+        option.setAttribute("aria-pressed", "true");
+        updateMakeImageState();
+    });
+    };
+
+    if (form.querySelector(".image-option[data-option-name]")) {
+    form.querySelectorAll(".image-option[data-option-name]").forEach(option => {
+        option.setAttribute("aria-pressed", String(option.classList.contains("is-selected")));
+    });
+    bindOptionSelection();
+    updateMakeImageState();
+    return;
+    }
+
     if (form.querySelector("input")) {
-    form.addEventListener("change", updateMakeImageState);
+    convertOptionsToButtons();
+    bindOptionSelection();
     updateMakeImageState();
     return;
     }
@@ -411,7 +473,8 @@ function buildImageMakerOptions() {
     `;
     }).join("");
 
-    form.addEventListener("change", updateMakeImageState);
+    convertOptionsToButtons();
+    bindOptionSelection();
     updateMakeImageState();
 }
 
@@ -730,6 +793,15 @@ function escapeHtml(str) {
     }[c]));
 }
 
+function canvasToBlob(canvas, type = "image/png", quality) {
+    return new Promise((resolve, reject) => {
+    canvas.toBlob(result => {
+        if (result) resolve(result);
+        else reject(new Error("Canvas conversion failed"));
+    }, type, quality);
+    });
+}
+
 async function saveCurrentView() {
     closePanel();
 
@@ -748,7 +820,7 @@ async function saveCurrentView() {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, capture.width, capture.height);
 
-    ctx.fillStyle = "rgba(0,0,0,.3)";
+    ctx.fillStyle = GRID_MAGENTA;
 
     const grid = 36;
     const dotSize = 0.8;
@@ -766,12 +838,12 @@ async function saveCurrentView() {
 
     ctx.save();
 
-    ctx.font = "600 16px ABCsolar, sans-serif";
+    ctx.font = '700 16px "Wanted Sans", sans-serif';
     ctx.fillStyle = "rgba(255,0,255,0.1)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    ctx.rotate(-Math.PI / 10);
+    ctx.rotate(Math.PI / 10);
 
     const gapX = 150;
     const gapY = 70;
@@ -823,15 +895,27 @@ async function saveCurrentView() {
     }
     }
 
-    /* ctx.font = "10px ABCsolar, sans-serif";
+    /* ctx.font = '10px "Wanted Sans", sans-serif';
     ctx.fillStyle = "rgba(0,0,0,0.5)";
     ctx.fillText("generated by fakekammer", 24, window.innerHeight - 24); */
 
+    try {
+    const blob = await canvasToBlob(canvas);
+    const imageUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
 
     link.download = "fakekammer-view.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click(); 
+    link.href = imageUrl;
+    link.hidden = true;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
+    } catch (error) {
+    console.error("Failed to save image", error);
+    alert("이미지를 저장하지 못했습니다. 다시 시도해 주세요.");
+    }
 }
 
 function getCaptureBounds() {
@@ -909,8 +993,8 @@ function fillCanvasTextWithLetterSpacing(ctx, text, x, y, letterSpacing = 0) {
 function getPosterTabHeight(ctx, artifact, frameHeight, tabFontSize = 13) {
     const categoryText = getPosterCategoryText(artifact);
     ctx.save();
-    ctx.font = `600 ${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
-    const categoryWidth = getCanvasTextWidth(ctx, categoryText, tabFontSize * 0.06);
+    ctx.font = `700 ${tabFontSize}px "Wanted Sans", sans-serif`;
+    const categoryWidth = getCanvasTextWidth(ctx, categoryText, tabFontSize * BODY_LETTER_SPACING_EM);
     ctx.restore();
 
     return Math.min(frameHeight, Math.max(84, categoryWidth + 34));
@@ -920,7 +1004,7 @@ function getPosterVisualBounds(artifacts, frame, tabWidth, tabFontSize) {
     const measureCanvas = document.createElement("canvas");
     const measureCtx = measureCanvas.getContext("2d");
 
-    measureCtx.font = `600 ${tabFontSize}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
+    measureCtx.font = `700 ${tabFontSize}px "Wanted Sans", sans-serif`;
 
     const boxes = artifacts.map(artifact => {
     const { rect } = artifact;
@@ -1010,17 +1094,17 @@ function drawPosterCategoryLabel(ctx, text, x, y, maxWidth, fontSize) {
     ctx.textBaseline = "middle";
 
     function setFont() {
-    ctx.font = `600 ${size}px ABCsolar, Apple SD Gothic Neo, sans-serif`;
+    ctx.font = `700 ${size}px "Wanted Sans", sans-serif`;
     }
 
     setFont();
 
-    while (getCanvasTextWidth(ctx, text, size * 0.06) > maxWidth && size > minSize) {
+    while (getCanvasTextWidth(ctx, text, size * BODY_LETTER_SPACING_EM) > maxWidth && size > minSize) {
     size -= 0.5;
     setFont();
     }
 
-    const letterSpacing = size * 0.06;
+    const letterSpacing = size * BODY_LETTER_SPACING_EM;
     const widest = getCanvasTextWidth(ctx, text, letterSpacing);
     const scaleX = widest > maxWidth ? maxWidth / widest : 1;
 
@@ -1042,7 +1126,7 @@ function drawPosterIdBadge(ctx, artifact, x, y) {
     ctx.fill();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "600 11px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = '700 11px "Wanted Sans", sans-serif';
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(idText, x + radius, y + radius + 0.5);
@@ -1061,7 +1145,7 @@ function drawPosterBackground(ctx, width, height, frameInset) {
     ctx.rect(frameInset, frameInset, width - frameInset * 2, height - frameInset * 2);
     ctx.clip();
 
-    ctx.fillStyle = "rgba(0,0,0,.28)";
+    ctx.fillStyle = GRID_MAGENTA;
 
     for (let x = frameInset + 20; x < width - frameInset; x += 36) {
     for (let y = frameInset + 20; y < height - frameInset; y += 36) {
@@ -1071,11 +1155,11 @@ function drawPosterBackground(ctx, width, height, frameInset) {
     }
     }
 
-    ctx.font = "600 16px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = '700 16px "Wanted Sans", sans-serif';
     ctx.fillStyle = "rgba(255,0,255,.1)";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.rotate(-Math.PI / 10);
+    ctx.rotate(Math.PI / 10);
 
     let watermarkRow = 0;
 
@@ -1188,7 +1272,7 @@ function drawPosterTitleFallback(ctx, width, height, box) {
     const y = box.y + box.height - 46;
 
     ctx.save();
-    ctx.font = "72px acid green ABCsolar, sans-serif";
+    ctx.font = '72px "acid-green", "Wanted Sans", sans-serif';
     ctx.lineJoin = "round";
     ctx.lineWidth = 14;
     ctx.strokeStyle = "#ff00ff";
@@ -1196,7 +1280,7 @@ function drawPosterTitleFallback(ctx, width, height, box) {
     ctx.strokeText(title, x, y);
     ctx.fillText(title, x, y);
 
-    ctx.font = "16px ABCsolar, Apple SD Gothic Neo, sans-serif";
+    ctx.font = '700 16px "Wanted Sans", sans-serif';
     ctx.fontStretch = "normal";
     ctx.lineWidth = 5;
     ctx.strokeStyle = "#ff00ff";
@@ -1219,8 +1303,8 @@ async function drawPosterTitle(ctx, width, height, frameInset) {
     height: titleWidth * cropRatio
     };
 
-    box.x = width - frameInset - box.width;
-    box.y = height - frameInset - box.height;
+    box.x = width - box.width;
+    box.y = height - box.height;
 
     const svg = await loadPosterTitleGraphic();
 
@@ -1246,7 +1330,10 @@ async function makePosterCanvas() {
     if (artifacts.length === 0) return null;
 
     if (document.fonts && document.fonts.ready) {
-    await document.fonts.ready;
+    await Promise.race([
+        document.fonts.ready,
+        new Promise(resolve => setTimeout(resolve, 2500))
+    ]);
     }
 
     const frame = 10;
@@ -1403,70 +1490,20 @@ function downloadPosterPdf(canvas, targetWindow = window) {
 }
 
 async function printPosterCanvas(canvas, printWindow) {
-    const previewUrl = canvas.toDataURL("image/png");
-    const pdfBlob = makePosterPdfBlob(canvas);
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    const faviconUrl = await getAssetDataUrl(PRINT_WINDOW_FAVICON);
-    const html = `<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>Fakekammer poster</title>
-<link rel="icon" type="image/png" sizes="32x32" href="${faviconUrl}">
-<link rel="shortcut icon" type="image/png" href="${faviconUrl}">
-<link rel="apple-touch-icon" href="${faviconUrl}">
-<style>
-html, body {
-  margin: 0;
-  width: 100%;
-  min-height: 100%;
-  background: #fff;
-}
-body {
-  display: grid;
-  place-items: center;
-  font-family: ABCsolar, Apple SD Gothic Neo, sans-serif;
-}
-a {
-  position: fixed;
-  right: 16px;
-  bottom: 16px;
-  color: #ff00ff;
-}
-img {
-  display: block;
-  width: 100vw;
-  height: auto;
-  max-height: 100vh;
-  object-fit: contain;
-}
-</style>
-</head>
-<body>
-<img src="${previewUrl}" alt="Fakekammer poster">
-<!-- <a id="downloadPoster" href="${pdfUrl}" download="fakekammer-poster.pdf">download poster pdf</a> -->
-<a id="downloadPoster" href="${pdfUrl}" download="fakekammer-poster.pdf" hidden aria-hidden="true"></a>
-<script>
-const link = document.getElementById("downloadPoster");
-window.addEventListener("load", () => {
-  window.focus();
-  link.click();
-});
-<\/script>
-</body>
-</html>`;
+    const blob = await canvasToBlob(canvas);
+    const imageUrl = URL.createObjectURL(blob);
+    const posterUrl = new URL(POSTER_PAGE_URL, window.location.href);
 
-    const pageUrl = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    posterUrl.searchParams.set("image", imageUrl);
+    printWindow.location.replace(posterUrl.href);
 
-    printWindow.location.replace(pageUrl);
-    setTimeout(() => {
-    URL.revokeObjectURL(pageUrl);
-    URL.revokeObjectURL(pdfUrl);
-    }, 60000);
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
 }
 
 async function printPoster() {
-    const printWindow = window.open("", "_blank");
+    const printWindow = window.open(POSTER_PAGE_URL, "_blank");
+
+    try {
     const canvas = await makePosterCanvas();
 
     if (!canvas) {
@@ -1481,6 +1518,18 @@ async function printPoster() {
     }
 
     await printPosterCanvas(canvas, printWindow);
+    } catch (error) {
+    console.error("Failed to create poster", error);
+
+    if (printWindow && !printWindow.closed) {
+        const errorUrl = new URL(POSTER_PAGE_URL, window.location.href);
+
+        errorUrl.searchParams.set("error", "포스터를 만들지 못했습니다. 다시 시도해 주세요.");
+        printWindow.location.replace(errorUrl.href);
+    } else {
+        alert("포스터를 만들지 못했습니다. 다시 시도해 주세요.");
+    }
+    }
 }
 
 document.querySelectorAll(".tools button").forEach(button => {
@@ -1629,7 +1678,8 @@ const landing = document.getElementById("landing");
 const landingBrandBlock = document.querySelector(".landing-brand-block");
 const landingIntro = document.querySelector(".landing-intro");
 const mainHeader = document.querySelector(".site-header");
-const enterBtn = document.getElementById("enterBtn");
+const landingChoiceButtons = [...document.querySelectorAll(".landing-choice")];
+const landingChoiceFeedback = document.getElementById("landingChoiceFeedback");
 const guideBtn = document.getElementById("guideBtn");
 const closeGuideBtn = document.getElementById("closeGuideBtn");
 const landingGuide = document.getElementById("landingGuide");
@@ -1640,25 +1690,50 @@ function syncLandingState() {
 
 syncLandingState();
 
-if (landingBrandBlock) {
-  landingBrandBlock.addEventListener("click", () => {
-    landingIntro.classList.toggle("is-open");
-  });
-}
+let correctLandingChoice = Math.floor(Math.random() * landingChoiceButtons.length);
+let landingChoiceLocked = false;
+let landingFeedbackTimer;
 
-enterBtn.addEventListener("click", () => {
-  landing.classList.add("hidden");
-  syncLandingState();
+landingChoiceButtons.forEach((button, index) => {
+  button.addEventListener("click", () => {
+    if (landingChoiceLocked) return;
+
+    window.clearTimeout(landingFeedbackTimer);
+    const isCorrect = index === correctLandingChoice;
+    landingChoiceFeedback.textContent = isCorrect ? "Good!" : "Oops!";
+    landingChoiceFeedback.classList.add("is-visible");
+
+    if (isCorrect) {
+      landingChoiceLocked = true;
+      landingFeedbackTimer = window.setTimeout(() => {
+        landing.classList.add("is-entering");
+        landing.classList.add("hidden");
+        syncLandingState();
+        window.setTimeout(() => {
+          landingChoiceFeedback.classList.remove("is-visible");
+          landing.classList.remove("is-entering");
+        }, 50);
+      }, 650);
+      return;
+    }
+
+    landingFeedbackTimer = window.setTimeout(() => {
+      landingChoiceFeedback.classList.remove("is-visible");
+    }, 900);
+  });
 });
 
 if (mainHeader) mainHeader.addEventListener("click", () => {
   closePanel();
   landing.classList.remove("hidden");
-  landingGuide.classList.add("is-hidden");
+  landing.classList.remove("is-entering");
+  correctLandingChoice = Math.floor(Math.random() * landingChoiceButtons.length);
+  landingChoiceLocked = false;
+  landingChoiceFeedback.classList.remove("is-visible");
   syncLandingState();
 });
 
-guideBtn.addEventListener("click", () => {
+if (guideBtn) guideBtn.addEventListener("click", () => {
   landingGuide.classList.toggle("is-hidden");
 });
 

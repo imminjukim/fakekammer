@@ -1,12 +1,10 @@
 @font-face {
-font-family: "ABCsolar";
-src: url("font/ABCSolarDisplayVariable-Trial.woff") format("woff");
-font-weight: 100 900;
-font-style: normal;
-font-display: block
+  font-family: "Wanted Sans";
+  src: url("font/WantedSansVariable.woff2") format("woff2-variations");
+  font-weight: 400 1000;
+  font-style: normal;
+  font-display: swap;
 }
-
-.my-text { font-feature-settings: "ss13","ss14","ss15";}
 
 
 :root {
@@ -14,6 +12,7 @@ font-display: block
   --ink: #181818;
   --black: #181818;
   --magenta: #ff00ff;
+  --title-magenta-filter: saturate(1.12) contrast(1.04);
   --panel-pink-light: #ff82ff;
   --muted: #ffffff;
   --line: rgba(0,0,0,.0);
@@ -22,15 +21,15 @@ font-display: block
   --control-height: 40px;
   --control-padding: 0 22px;
   --control-font-size: 14px;
-  --control-font-weight: 550;
-  --option-title-font: "ABCsolar", sans-serif;
+  --body-font-weight: 700;
+  --body-letter-spacing: -0.015em;
+  --control-font-weight: var(--body-font-weight);
+  --option-title-font: "Wanted Sans", sans-serif;
   --option-title-size: 18px;
-  --option-title-weight: 550;
-  --option-label-font: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --option-title-weight: var(--body-font-weight);
+  --option-label-font: "Wanted Sans", sans-serif;
   --option-label-size: 14px;
-  --option-label-weight: 700;
-  --abc-letter-spacing: .06em;
-  --kr-letter-spacing: .04em;
+  --option-label-weight: var(--body-font-weight);
   --cursor-default: url("asset/default_cursor.svg?v=20260615c") 7 5, pointer;
   --cursor-action: url("asset/action_cursor.svg?v=20260615c") 7 5, pointer;
   --cursor-title: url("asset/help_cursor.svg?v=20260615c") 16 16, pointer;
@@ -58,8 +57,9 @@ body {
     radial-gradient(circle at 15% 10%, rgba(255,255,255,.98), transparent 28%),
     linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
   color: var(--ink);
-  font-family: "ABCsolar", "dongle", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 550;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
+  letter-spacing: var(--body-letter-spacing);
   cursor: var(--cursor-default);
   user-select: none;
   overscroll-behavior: none;
@@ -103,12 +103,46 @@ body.ready {
     visibility 0s linear .18s;
 }
 
+.landing.hidden *,
+.landing.is-entering * {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.landing.is-entering,
+.landing.is-entering.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+  transition: none;
+}
+
 .landing-ui {
   width: 100%;
   height: 100%;
   position: relative;
   position: relative;
+  z-index: 1;
   padding: clamp(22px, 2.45vw, 38px);
+}
+
+.landing-watermark {
+  position: absolute;
+  inset: -28%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .09;
+  overflow: hidden;
+  color: var(--magenta);
+  font-family: "Wanted Sans", sans-serif;
+  font-size: 16px;
+  font-weight: var(--body-font-weight);
+  line-height: 72px;
+  letter-spacing: var(--body-letter-spacing);
+  word-spacing: 36px;
+  transform: rotate(18deg);
+  transform-origin: center;
 }
 
 .landing-brand-block {
@@ -139,8 +173,7 @@ body.ready {
       0 2px 0 rgba(200,0,200,.85),
       0 3px 0 rgba(120,0,120,.35);
   filter:
-    saturate(1.12)
-    contrast(1.04);
+    var(--title-magenta-filter);
   white-space: nowrap;
   pointer-events: none;
   user-select: none;
@@ -149,11 +182,11 @@ body.ready {
 .landing-subtitle {
   margin: 10px 0 0;
   color: rgb(255,20,255);
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(16px, 1.55vw, 24px);
-  font-weight: 480;
+  font-weight: var(--body-font-weight);
   line-height: 1;
-  letter-spacing: 0;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 .landing-intro {
@@ -172,9 +205,9 @@ body.ready {
   background: linear-gradient(180deg, #ff30ff 0%, #ff30ff 70%, #ff82ff 100%);
   border: 4px solid #ff30ff;
   color: #fff;
-  font-family: "Apple SD Gothic Neo", "ABCsolar", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
    font-size: clamp(12px, .98vw, 16px);
-  font-weight: 650;
+  font-weight: var(--body-font-weight);
   line-height: 1.55;
   word-break: keep-all;
   z-index: 2;
@@ -198,9 +231,9 @@ body.ready {
     /* linear-gradient(180deg, var(--panel-pink-light) 0%, var(--magenta) 100%) padding-box,
     linear-gradient(180deg, #ffbfff 0%, var(--magenta) 100%) border-box; */
   color: #fff;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(14px, 1.15vw, 20px);
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
@@ -300,9 +333,9 @@ body.ready {
   color: #ff00ff;
   display: grid;
   place-items: center;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: 36px;
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1;
   transform: translateX(-50%);
   box-shadow: none;
@@ -371,7 +404,7 @@ body.ready {
 .meta,
 .description,
 button {
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
 }
 
 .site-header {
@@ -410,8 +443,7 @@ button {
       0 3px 0 rgba(120,0,120,.35);
 
   filter:
-    saturate(1.12)
-    contrast(1.04);
+    var(--title-magenta-filter);
   opacity: 0;
   transition:
     transform .18s ease,
@@ -442,8 +474,8 @@ button {
 
 .subtitle {
   margin-top: -8px;
-  font-family: "ABCsolar", monospace;
-  font-weight: 500;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   font-size: 18px;
   color: rgb(255,20,255);
   text-transform: uppercase;
@@ -480,6 +512,16 @@ button {
   cursor: var(--cursor-action);
   pointer-events: auto;
   touch-action: manipulation;
+  transition:
+    background .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease,
+    filter .2s ease;
+}
+
+.tools button:hover {
+  background: var(--magenta);
+  filter: var(--title-magenta-filter);
 }
 
 .archive-picker {
@@ -501,6 +543,7 @@ button {
   transition:
     background .2s ease,
     color .2s ease;
+  filter: saturate(1.18);
 }
 
 .archive-picker-default {
@@ -527,9 +570,9 @@ button {
     /* linear-gradient(180deg, var(--panel-pink-light) 0%, var(--magenta) 100%) padding-box,
     linear-gradient(180deg, #ffbfff 0%, var(--magenta) 100%) border-box; */
   color: #fff;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(12px, 1.25vw, 20px);
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1;
   text-align: left;
   text-transform: uppercase;
@@ -578,14 +621,25 @@ button {
 }
 
 .image-option {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  text-shadow: none;
+  backdrop-filter: none;
   font-family: var(--option-label-font);
   font-size: var(--option-label-size);
   font-weight: var(--option-label-weight);
   line-height: 1;
   cursor: var(--cursor-action);
+  touch-action: manipulation;
 }
 
 .image-option * {
@@ -594,13 +648,17 @@ button {
 
 .image-option input {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: var(--cursor-action);
 }
 
-.image-option input:checked + span {
+.image-option.is-selected span {
   background: #fff;
   color: #ff00ff;
 }
@@ -617,6 +675,7 @@ button {
   background: #ff00ff;
   color: #fff;
   white-space: nowrap;
+  pointer-events: none;
   transition:
     background .14s ease,
     color .14s ease,
@@ -625,6 +684,15 @@ button {
 
 .image-option:hover span {
   transform: translateY(-1px);
+}
+
+.image-option:hover,
+.image-option:active {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  text-shadow: none;
+  transform: none;
 }
 
 .image-maker-actions {
@@ -643,7 +711,7 @@ button {
   border-radius: 999px;
   background: #fff;
   color: var(--magenta);
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: var(--control-font-size);
   font-weight: var(--control-font-weight);
   line-height: 1;
@@ -674,8 +742,8 @@ button {
   pointer-events: none;
   overflow: hidden;
   color: var(--black);
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
-  font-weight: 550;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   transition: opacity .16s ease, visibility .16s ease;
 }
 
@@ -705,28 +773,28 @@ button {
   margin: 0;
   color: var(--black);
   line-height: 1.08;
-  letter-spacing: 0;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 .picker-title-kr {
-  font-family: "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(28px, 1.8vw, 34px);
-  font-weight: 800;
+  font-weight: var(--body-font-weight);
 }
 
 .picker-title-en {
   margin-top: 0px;
-  font-family: "ABCsolar", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(27px, 2.2vw, 40px);
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
 }
 
 .archive-picker-detail h2 {
   margin: 0;
   font-size: clamp(22px, 2vw, 32px);
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1.16;
-  letter-spacing: 0;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 .picker-meta {
@@ -740,38 +808,29 @@ button {
 
 .picker-meta dt {
   color: var(--black);
-  font-family: "ABCsolar", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(13px, .98vw, 16px);
-  font-weight: 500;
+  font-weight: var(--body-font-weight);
 }
 
 .picker-meta dd {
   margin: 0;
-  font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: clamp(13px, .9vw, 15px);
-  font-weight: 750;
+  font-weight: var(--body-font-weight);
 }
 
 .picker-description {
-  font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   margin: 0;
   padding: 0;
   border: 0;
   font-size: clamp(12px, .9vw, 14px);
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1.58;
   text-align: left;
   word-break: keep-all;
   overflow: hidden;
-}
-
-.landing-intro,
-.picker-title-kr,
-.picker-meta dd,
-.picker-description,
-.image-option,
-.intro {
-  letter-spacing: var(--kr-letter-spacing);
 }
 
 .stage {
@@ -787,6 +846,8 @@ button {
 
 body:has(.artifact:hover) .stage {
   background-color: #ff00ff;
+  background-image:
+    radial-gradient(circle, #ffffff 1px, transparent 1.15px);
 }
 
 body.detail-open .archive-picker {
@@ -820,7 +881,7 @@ button {
     0 0 18px rgba(255, 255, 255, 0),
     0 0 40px rgba(255,255,255,.03);
 
-  font-family: "ABCsolar", monospace;
+  font-family: "Wanted Sans", sans-serif;
   font-weight: var(--control-font-weight);
   font-size: var(--control-font-size);
 
@@ -861,8 +922,8 @@ button:hover {
 
   width: min(420px, calc(100vw - 56px));
 
-  font-family: "Apple SD Gothic Neo", sans-serif;
-  font-weight: 500;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   font-size: 13px;
   line-height: 1.7;
   color: var(--black);
@@ -904,7 +965,7 @@ button:hover {
   will-change: transform;
 
   background-image:
-  radial-gradient(circle, rgba(255, 255, 255, 1) 1px, transparent 0.8px);
+  radial-gradient(circle, rgba(255, 0, 255, .5) 1px, transparent 1.15px);
   background-size: 36px 36px;
 }
 
@@ -917,10 +978,10 @@ button:hover {
   z-index: 1;
   color: var(--black);
 
-  font-family: "ABCsolar";
-  font-weight: 550;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   font-size: 16px;
-  letter-spacing: .08em;
+  letter-spacing: var(--body-letter-spacing);
   text-transform: uppercase;
   pointer-events: none;
   transition: opacity .4s ease;
@@ -1002,9 +1063,9 @@ button:hover {
   place-items: center;
   background: #ff00ff;
   color: #ffffff;
-  font-family: "ABCsolar", "Apple SD Gothic Neo", sans-serif;
+  font-family: "Wanted Sans", sans-serif;
   font-size: 11px;
-  font-weight: 550;
+  font-weight: var(--body-font-weight);
   line-height: 1;
   opacity: 0;
   transform: scale(.86);
@@ -1081,24 +1142,24 @@ button.delete,
 }
 
 .panel-text {
-  font-family: "ABCsolar", sans-serif;
-  font-weight: 550;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   color: #fff;
   padding: 16px 18px 16px;
   overflow: hidden;
   background: transparent;
   display: block;
   line-height: 1.6;
-  letter-spacing: 0.01rem;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 .panel-text h1 {
-  font-family: "ABCsolar", sans-serif;
-  font-weight: 550;
+  font-family: "Wanted Sans", sans-serif;
+  font-weight: var(--body-font-weight);
   margin: 0 0 10px;
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.12;
-  letter-spacing:0;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 .meta {
@@ -1144,7 +1205,7 @@ button.delete,
     --control-height: 36px;
     --control-padding: 0 14px;
     --control-font-size: 11px;
-    --control-font-weight: 550;
+    --control-font-weight: var(--body-font-weight);
   }
 
   .landing-ui {
@@ -1315,16 +1376,261 @@ button.delete,
 }
 
 .landing-panel-title,
+.landing-subtitle,
+.landing-intro,
 .image-maker-title,
 .image-option-group legend,
+.image-option,
 .make-image-btn,
+.archive-picker-detail,
+.picker-title-kr,
 .picker-title-en,
 .picker-meta dt,
+.picker-meta dd,
+.picker-description,
+.intro,
 .hint,
 .artifact-id-badge,
 .panel-text,
 .panel-text h1,
 button {
-  font-weight: 550;
-  letter-spacing: var(--abc-letter-spacing);
+  font-weight: var(--body-font-weight);
+  letter-spacing: var(--body-letter-spacing);
+}
+
+/* Landing page: show the complete introduction at once. */
+.landing-brand-block {
+  top: 12px;
+  left: 20px;
+  max-width: calc(100vw - 190px);
+  cursor: var(--cursor-default);
+}
+
+.landing-brand-block * {
+  cursor: var(--cursor-default);
+}
+
+.landing-title {
+  font-size: min(12vw, 180px);
+  letter-spacing: .005em;
+}
+
+.landing-choice-wrap {
+  position: absolute;
+  top: 12px;
+  right: clamp(34px, 3vw, 58px);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.landing-choices {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, .9vw, 18px);
+}
+
+.landing-choice {
+  width: clamp(78px, 9.4vw, 176px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: var(--cursor-action);
+  overflow: hidden;
+  transition: transform .16s ease;
+}
+
+.landing-choice img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: var(--cursor-action);
+  image-rendering: auto;
+  filter: saturate(1.2);
+}
+
+.landing-choice:hover,
+.landing-choice:active {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  text-shadow: none;
+  transform: translateY(-3px);
+  filter: none;
+}
+
+.landing-choice:focus-visible {
+  outline: 3px solid #181818;
+  outline-offset: 5px;
+}
+
+.landing-choice-feedback {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  margin: 0;
+  background: linear-gradient(180deg, #ff00ff 0%, #ff12ff 64%, #ff48ff 100%);
+  color: #fff;
+  font-family: "acid-green", "Wanted Sans", sans-serif;
+  font-size: clamp(130px, 35vw, 530px);
+  font-weight: 400;
+  line-height: .75;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  filter: saturate(1.15) contrast(1.04);
+}
+
+.landing-choice-feedback.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.landing-intro {
+  top: auto;
+  right: auto;
+  left: 3vw;
+  bottom: clamp(30px, 4.2vh, 64px);
+  width: 35.5vw;
+  height: min(71.2vh, 578px);
+  min-height: 0;
+  padding: clamp(70px, 9.4vh, 80px) clamp(42px, 4.15vw, 64px) clamp(38px, 4.8vh, 48px);
+  gap: clamp(32px, 4.5vh, 40px);
+  justify-content: flex-start;
+  border-width: 4px;
+  border-radius: 50%;
+  font-size: clamp(15px, 1.18vw, 19px);
+  line-height: 1.62;
+  text-align: center;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  background: linear-gradient(180deg, #ff00ff 0%, #ff18ff 58%, #ff8cff 100%);
+  border-color: #ff00ff;
+  filter: saturate(1.18);
+}
+
+.landing-intro .landing-panel-title {
+  flex: 0 0 auto;
+  width: 84%;
+  min-width: 0;
+}
+
+.landing-guide {
+  right: 3vw;
+  bottom: clamp(30px, 4.2vh, 64px);
+  width: 56.5vw;
+  height: min(71.2vh, 578px);
+  min-width: 0;
+  padding: clamp(42px, 5.7vh, 50px) clamp(34px, 4vw, 60px) clamp(24px, 3vh, 36px);
+  gap: clamp(12px, 1.6vh, 18px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ff00ff 0%, #ff18ff 58%, #ff8cff 100%);
+  border-color: #ff00ff;
+  filter: saturate(1.18);
+}
+
+.landing-guide .landing-panel-title {
+  flex: 0 0 auto;
+  width: min(55%, 320px);
+  min-width: 250px;
+}
+
+.landing-guide-graphic {
+  align-items: center;
+}
+
+.landing-guide-graphic img {
+  max-width: 88%;
+  max-height: 92%;
+  transform: translateY(-24px);
+}
+
+.landing-panel-title {
+  background: linear-gradient(180deg, #ff00ff 0%, #ff18ff 58%, #ff8cff 100%);
+  border-color: #ffadff;
+}
+
+@media (max-width: 900px) {
+  html,
+  body {
+    overflow: auto;
+  }
+
+  .landing {
+    overflow-y: auto;
+  }
+
+  .landing-ui {
+    min-height: 100%;
+    height: auto;
+    padding: 24px 18px 36px;
+  }
+
+  .landing-brand-block {
+    position: relative;
+    top: auto;
+    left: auto;
+    max-width: calc(100% - 76px);
+  }
+
+  .landing-title {
+    font-size: clamp(64px, 20vw, 104px);
+  }
+
+  .landing-choice-wrap {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+  }
+
+  .landing-choices {
+    gap: 5px;
+  }
+
+  .landing-choice {
+    width: clamp(38px, 11vw, 52px);
+  }
+
+  .landing-choice-feedback {
+    font-size: min(34vw, 180px);
+  }
+
+  .landing-intro,
+  .landing-guide {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    min-height: 360px;
+    margin: 34px 0 0;
+    padding: 42px 30px;
+  }
+
+  .landing-intro {
+    border-radius: 48% / 30%;
+    font-size: 12px;
+    line-height: 1.65;
+    gap: 26px;
+  }
+
+  .landing-guide {
+    min-height: 330px;
+    margin-bottom: 28px;
+    border-radius: 48% / 24%;
+    gap: 20px;
+  }
+
+  .landing-guide .landing-panel-title {
+    min-width: min(250px, 82%);
+  }
 }
