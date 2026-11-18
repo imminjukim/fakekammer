@@ -609,7 +609,20 @@ function createArtifact(item = randomItem(), x = null, y = null) {
 
     const img = el.querySelector("img");
 
+    function revealArtifact() {
+    if (el.classList.contains("is-loaded")) return;
+
+    requestAnimationFrame(() => {
+        el.classList.add("is-loaded");
+    });
+    }
+
+    img.addEventListener("load", revealArtifact, { once: true });
     imageWithFallback(img, item.assetBase);
+
+    if (img.complete && img.naturalWidth > 0) {
+    revealArtifact();
+    }
 
     el.querySelector(".delete").addEventListener("click", e => {
     e.stopPropagation();
