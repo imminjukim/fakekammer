@@ -88,10 +88,9 @@
     const imageUrl = params.get("image");
     const errorMessage = params.get("error");
     const isPreviewOnly = params.get("preview") === "1";
+    const requestId = params.get("request");
 
-    if (errorMessage) {
-      posterStatus.textContent = errorMessage;
-    } else if (imageUrl) {
+    function showPosterImage(source) {
       posterImage.onload = () => {
         document.body.classList.add("ready");
 
@@ -107,7 +106,27 @@
         posterStatus.textContent = "포스터 이미지를 불러오지 못했습니다. 다시 시도해 주세요.";
       };
 
-      posterImage.src = imageUrl;
+      posterImage.src = source;
+    }
+
+    window.addEventListener("message", event => {
+      if (event.source !== window.opener) return;
+      if (!event.data || event.data.type !== "fakekammer-poster-image") return;
+      if (event.data.requestId !== requestId) return;
+      if (typeof event.data.image !== "string" || !event.data.image.startsWith("data:image/")) return;
+
+      showPosterImage(event.data.image);
+    });
+
+    if (errorMessage) {
+      posterStatus.textContent = errorMessage;
+    } else if (imageUrl) {
+      showPosterImage(imageUrl);
+    } else if (requestId && window.opener) {
+      window.opener.postMessage({
+        type: "fakekammer-poster-ready",
+        requestId
+      }, "*");
     }
   </script>
 </body>

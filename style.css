@@ -1047,9 +1047,26 @@ button:hover {
   margin: 0;
   position: relative;
   background: #ffffff;
+  isolation: isolate;
+}
+
+.artifact figure::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  z-index: 0;
+  background: #ff00ff;
+  box-shadow:
+    0 0 0 5px #ff4dff,
+    0 0 0 11px #ff8fff,
+    0 0 0 18px #ffd1ff;
+  filter: var(--title-magenta-filter);
+  pointer-events: none;
 }
 
 .artifact img {
+  position: relative;
+  z-index: 1;
   width: var(--size, 100px);
   height: auto;
   display: block;
